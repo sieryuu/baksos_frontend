@@ -1,0 +1,3 @@
+interface TipeIdentitas {
+    name: string;
+}

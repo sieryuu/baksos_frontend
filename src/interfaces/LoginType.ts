@@ -1,0 +1,3 @@
+interface LoginType {
+    token: string
+}
