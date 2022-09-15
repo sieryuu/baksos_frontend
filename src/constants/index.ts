@@ -1,6 +1,5 @@
-
 const DEFAULT_NAME = 'Tzu Chi';
-const BAKSOS_BACKEND_URL = 'http://127.0.0.1:8000';
+const BAKSOS_BACKEND_URL = process.env.BACKEND_HOST || 'http://localhost:8000';
 
 const TYPE_IDENTITAS: TipeIdentitas[] = [
     { name: "KTP" },
