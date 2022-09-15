@@ -1,6 +1,6 @@
 import { login, SaveUserToken } from '@/services/baksos/UserController';
 import { PageContainer } from '@ant-design/pro-components';
-import { Card, Row } from 'antd';
+import { Card, notification, Row } from 'antd';
 import { Formik } from 'formik';
 import { Form, SubmitButton, Input } from 'formik-antd';
 import { history } from 'umi';
@@ -8,11 +8,28 @@ import * as Yup from 'yup';
 
 
 const LoginPage: React.FC = () => {
-  const handleLogin = (values: LoginProps) => {
+  const handleLogin = (values: LoginProps, actions: any) => {
     login(values)
       .then((token) => {
         SaveUserToken(token.token);
         history.push('/')
+        actions.resetForm();
+      })
+      .catch(err => {
+        let errDescription = ""
+        if (typeof err.response.data === typeof "")
+          errDescription = err.response.data
+        else {
+          for (let k in err.response.data) {
+            errDescription += `${k}: ${err.response.data[k]}`
+          }
+        }
+
+        notification["warning"]({
+          message: `Login Gagal`,
+          description: errDescription,
+        });
+        actions.resetForm();
       })
   }
 

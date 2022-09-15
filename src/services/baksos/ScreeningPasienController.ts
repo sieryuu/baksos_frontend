@@ -30,7 +30,12 @@ export async function CapKehadiranEkg(params: CapKehadiranType) {
     return PostRequest<string>('/screening-pasien/hadir_ekg/', params)
 }
 
+
 /// cancel
+
+export async function CancelTensi(pasienScreeningId: number) {
+    return PostRequest<string>(`/screening-pasien/${pasienScreeningId}/batal_tensi/`)
+}
 
 export async function CancelPemeriksaan(pasienScreeningId: number) {
     return PostRequest<string>(`/screening-pasien/${pasienScreeningId}/batal_pemeriksaan/`)
@@ -51,3 +56,4 @@ export async function CancelEkg(pasienScreeningId: number) {
 export async function CancelKK(pasienScreeningId: number) {
     return PostRequest<string>(`/screening-pasien/${pasienScreeningId}/batal_kartu_kuning/`)
 }
+

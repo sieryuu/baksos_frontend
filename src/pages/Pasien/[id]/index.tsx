@@ -1,22 +1,25 @@
 import { PageContainer } from '@ant-design/pro-components';
-import { Button, Card, Col, notification, Row, Space, Typography } from 'antd';
+import { Button, Card, notification, Row, Space, Typography } from 'antd';
 import {
   Form,
   Input,
   SubmitButton,
 } from 'formik-antd';
 import PasienForm from '@/components/PasienForm';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from '@umijs/max';
 import { queryPasienById, updatePasienHadir } from '@/services/baksos/PasienController';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import moment from 'moment';
 import { history } from 'umi';
+import FormStatusPasien from '@/print_template/FormStatusPasien';
+import ReactToPrint from 'react-to-print';
 
 const { Text, Link } = Typography;
 
 const PasienDetailPage: React.FC = () => {
+  const printRef = useRef(null);
   const [pasien, setPasien] = useState<PasienType>()
   const [isEditNomorAntrian, setIsEditNomorAntrian] = useState<boolean>(false)
   const urlParams = useParams()
@@ -107,7 +110,10 @@ const PasienDetailPage: React.FC = () => {
                       pasienSudahDaftar ?
                         <>
                           <Form.Item name="print">
-                            <Button type='primary'>PRINT FORM STATUS PASIEN SCREENING</Button>
+                            <ReactToPrint
+                              trigger={() => <Button type='primary'>PRINT FORM STATUS PASIEN SCREENING</Button>}
+                              content={() => printRef.current}
+                            />
                           </Form.Item>
                         </>
                         :
@@ -125,6 +131,7 @@ const PasienDetailPage: React.FC = () => {
           <PasienForm IsCreate={false} Pasien={pasien} PasienStateChanged={stateChangedHandler} />
         </Card>
       </Space>
+      <FormStatusPasien ref={printRef} pasien={pasien} />
     </PageContainer>
   );
 };

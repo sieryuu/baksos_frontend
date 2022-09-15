@@ -1,5 +1,5 @@
 import { patchPasien } from '@/services/baksos/PasienController';
-import { CancelEkg, CancelLab, CancelPemeriksaan, CancelRadiologi, CapKehadiranEkg, CapKehadiranLab, CapKehadiranPemeriksaan, CapKehadiranRadiologi, CapKehadiranTensi } from '@/services/baksos/ScreeningPasienController';
+import { CancelEkg, CancelLab, CancelPemeriksaan, CancelRadiologi, CancelTensi, CapKehadiranEkg, CapKehadiranLab, CapKehadiranPemeriksaan, CapKehadiranRadiologi, CapKehadiranTensi, SimpanHasilRadiologi } from '@/services/baksos/ScreeningPasienController';
 import { CheckCircleTwoTone, ClockCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
 import { ProCard } from '@ant-design/pro-components';
 import { Radio, Input, Space, Card, Typography, Button, Checkbox, DatePicker, notification, Modal, Form } from 'antd';
@@ -40,7 +40,7 @@ const screeningPasienCard: React.CSSProperties = {
 };
 
 const ProgressIcon: React.FC<ProgressIconProps> = (props) => {
-  if (props.isPass == null) {
+  if (props.isPass === null) {
     return <ClockCircleTwoTone />
   }
   if (props.isPass)
@@ -68,7 +68,13 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   }
 
   const cancelTensi = () => {
-
+    CancelTensi(pasienScreening.id)
+      .then(data => {
+        notification["success"]({ message: `Cancel Tensi Berhasil`, description: data });
+        retrievePasien()
+      }).catch(err => {
+        notification["warning"]({ message: `Cancel Tensi Gagal`, description: err });
+      })
   }
   //#endregion
 
@@ -103,7 +109,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       perlu_radiologi: values.perlu_radiologi,
       perlu_ekg: values.perlu_ekg
     })
-      .then(data => {
+      .then(() => {
         notification["success"]({ message: `Update Detail Lab Berhasil`, description: "Detail Lab Pasien berhasil di update" })
         retrievePasien()
       })
@@ -111,6 +117,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   }
 
   const labFormik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       pasien_id: 0,
       hadir: true,
@@ -162,12 +169,31 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   }
 
   const radiologiFormik = useFormik<HasilRadiologiType>({
+    enableReinitialize: true,
     initialValues: {
-      nomor_kertas_penyerahan: "",
-      tipe_hasil_rontgen: ""
+      nomor_kertas_penyerahan: pasienScreening.nomor_kertas_penyerahan,
+      tipe_hasil_rontgen: pasienScreening.tipe_hasil_rontgen
     },
     onSubmit: values => {
+      SimpanHasilRadiologi(
+        pasienScreening.id,
+        values
+      ).then(data => {
+        notification["success"]({ message: `Update Hasil Radiologi Berhasil`, description: data });
+        retrievePasien()
+        setIsRadiologiModalOpen(false)
+      }).catch(err => {
+        let errDescription = ""
+        if (typeof err.response.data === typeof "")
+          errDescription = err.response.data
+        else {
+          for (let k in err.response.data) {
+            errDescription += `${k}: ${err.response.data[k]}`
+          }
+        }
 
+        notification["warning"]({ message: `Update Hasil Radiologi Gagal`, description: errDescription });
+      })
     },
   });
 
@@ -231,7 +257,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
               pasienScreening?.telah_lewat_cek_tensi != null ?
                 <Space direction='vertical'>
                   <Text>{pasienScreening.telah_lewat_cek_tensi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_tensi).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                  <Button type='link' danger size='small'>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
+                  <Button type='link' danger size='small' onClick={cancelTensi}>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
                 </Space>
                 :
                 <Space direction='vertical'>
@@ -323,12 +349,12 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
             pasienScreening.telah_lewat_cek_radiologi != null ?
               <Form>
                 <Space direction='vertical'>
-                  <Radio.Group onChange={() => { }} value="">
-                    <Radio value={3}>USB</Radio>
-                    <Radio value={4}>PRINT</Radio>
+                  <Radio.Group value={pasienScreening.tipe_hasil_rontgen} disabled>
+                    <Radio value="USB">USB</Radio>
+                    <Radio value="PRINT">PRINT</Radio>
                   </Radio.Group>
-                  <Form.Item name="nomor_kertas_penyerahan" label="Nomor Kertas Penyerahan USB RONTGEN">
-                    <Input name='nomor_kertas_penyerahan' />
+                  <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
+                    <Input name='nomor_kertas_penyerahan' disabled value={pasienScreening.nomor_kertas_penyerahan} />
                   </Form.Item>
                   <Button type='primary' onClick={() => setIsRadiologiModalOpen(true)}>Edit</Button>
                 </Space>
@@ -393,8 +419,8 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
               <Radio value="USB">USB</Radio>
               <Radio value="PRINT">PRINT</Radio>
             </Radio.Group>
-            <Form.Item name="nomor_kertas_penyerahan" label="Nomor Kertas Penyerahan USB RONTGEN">
-              <Input name='nomor_kertas_penyerahan' onChange={radiologiFormik.handleChange} />
+            <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
+              <Input name='nomor_kertas_penyerahan' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.nomor_kertas_penyerahan} />
             </Form.Item>
           </Space>
         </Form>

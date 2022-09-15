@@ -17,6 +17,7 @@
     "antd": "^4.20.7",
     "formik": "^2.2.9",
     "formik-antd": "^2.0.4",
+    "react-to-print": "^2.14.7",
     "universal-cookie": "^4.0.4",
     "yup": "^0.32.11"
   },
