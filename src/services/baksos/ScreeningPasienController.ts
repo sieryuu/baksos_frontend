@@ -30,6 +30,9 @@ export async function CapKehadiranEkg(params: CapKehadiranType) {
     return PostRequest<string>('/screening-pasien/hadir_ekg/', params)
 }
 
+export async function CapKehadiranKartuKuning(params: CapKehadiranType) {
+    return PostRequest<string>('/screening-pasien/hadir_kartu_kuning/', params)
+}
 
 /// cancel
 

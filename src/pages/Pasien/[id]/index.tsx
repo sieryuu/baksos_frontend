@@ -131,7 +131,7 @@ const PasienDetailPage: React.FC = () => {
           <PasienForm IsCreate={false} Pasien={pasien} PasienStateChanged={stateChangedHandler} />
         </Card>
       </Space>
-      <FormStatusPasien ref={printRef} pasien={pasien} />
+      <div style={{ display: "none" }}><FormStatusPasien ref={printRef} pasien={pasien} /></div>
     </PageContainer>
   );
 };

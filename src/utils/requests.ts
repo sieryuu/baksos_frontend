@@ -1,5 +1,6 @@
 import { BAKSOS_BACKEND_URL } from "@/constants"
 import { GetCurrentUserToken } from "@/services/baksos/UserController"
+import { AxiosResponse } from "@umijs/max"
 import { request } from "@umijs/max"
 
 export const BaksosRequest = <T>(method: string, url: string, params?: any, data?: any) => {
@@ -29,4 +30,16 @@ export const PutRequest = <T>(url: string, data?: any) => {
 
 export const PatchRequest = <T>(url: string, data?: any) => {
     return BaksosRequest<T>('PATCH', url, {}, data);
+}
+
+export const ParseResponseError = (err: any) => {
+    let errDescription = ""
+    if (typeof err.response.data === typeof "")
+        errDescription = err.response.data
+    else {
+        for (let k in err.response.data) {
+            errDescription += `${k}: ${err.response.data[k]}`
+        }
+    }
+    return errDescription
 }

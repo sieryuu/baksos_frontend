@@ -4,7 +4,7 @@ import { queryPenyakit } from '@/services/baksos/ReferensiController';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { useSearchParams } from '@umijs/max';
 import { useParams } from '@umijs/max';
-import { Radio, Input, Space, Typography, RadioChangeEvent, notification } from 'antd';
+import { Radio, Input, Space, Typography, RadioChangeEvent, notification, Button } from 'antd';
 import { useEffect, useState } from 'react';
 import ScreeningPasienPage from './screening_pasien';
 import { history } from 'umi';
@@ -82,12 +82,14 @@ const ScreeningPage: React.FC = () => {
   }, [urlParams])
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost extra={[
+      <Button key="ke_halamat_pasien" onClick={() => history.push(`/pasien/${pasien?.id}`)}>Ke Detail Pasien</Button>,
+    ]}>
       <ProCard direction="column" ghost gutter={[0, 8]}>
         <ProCard title="Pencarian" layout="default" bordered >
           <Space>
             <Radio.Group onChange={handlePenyakitChanged} value={selectedPenyakit} buttonStyle="solid">
-              <Radio.Button value="MATA"><Text strong style={{ color: "red" }}>Katarak</Text></Radio.Button>
+              <Radio.Button value="KATARAK"><Text strong style={{ color: "red" }}>Katarak</Text></Radio.Button>
               <Radio.Button value="BENJOLAN"><Text strong style={{ color: "green" }}>Benjolan</Text></Radio.Button>
               <Radio.Button value="HERNIA"><Text strong style={{ color: "blue" }}>Hernia</Text></Radio.Button>
               <Radio.Button value="SUMBING"><Text strong style={{ color: "orange" }}>Sumbing</Text></Radio.Button>

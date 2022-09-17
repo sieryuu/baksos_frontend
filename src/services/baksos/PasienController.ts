@@ -70,3 +70,11 @@ export async function importPasien(file: any) {
         }
     })
 }
+
+export async function SerahKartuKuning(pasien_id: number, values: SerahKartuKuningType) {
+    return PostRequest<string>(`/pasien/${pasien_id}/serah_kartu_kuning/`, values)
+}
+
+export async function BatalSerahKartuKuning(pasien_id: number) {
+    return PostRequest<string>(`/pasien/${pasien_id}/batal_serah_kartu_kuning/`)
+}
