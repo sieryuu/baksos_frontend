@@ -78,6 +78,7 @@ const PasienDetailPage: React.FC = () => {
     return <span>loading...</span>
   }
   const pasienSudahDaftar = pasien.nomor_antrian != null
+  const pasienPerluRescreenHariIni = pasien.perlu_rescreen && (moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day") == false)
 
   return (
     <PageContainer ghost extra={[
@@ -104,10 +105,10 @@ const PasienDetailPage: React.FC = () => {
                 <Row justify='center'>
                   <Space>
                     <Form.Item name="nomor_antrian" label="Nomor Antrian">
-                      <Input name='nomor_antrian' style={{ width: 150 }} autoFocus disabled={pasienSudahDaftar && !isEditNomorAntrian} />
+                      <Input name='nomor_antrian' style={{ width: 150 }} autoFocus disabled={pasienSudahDaftar && !isEditNomorAntrian && !pasienPerluRescreenHariIni} />
                     </Form.Item>
                     {
-                      pasienSudahDaftar ?
+                      pasienSudahDaftar && !pasienPerluRescreenHariIni ?
                         <>
                           <Form.Item name="print">
                             <ReactToPrint
@@ -118,7 +119,7 @@ const PasienDetailPage: React.FC = () => {
                         </>
                         :
                         <Form.Item name="submit">
-                          <SubmitButton type='primary'>Simpan &amp; Hadir</SubmitButton>
+                          <SubmitButton type='primary'>{pasien.perlu_rescreen ? "RESCREEN" : "Simpan & Hadir"}</SubmitButton>
                         </Form.Item>
                     }
                   </Space>

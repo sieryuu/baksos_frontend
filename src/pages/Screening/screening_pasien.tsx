@@ -1,4 +1,4 @@
-import { BatalSerahKartuKuning, patchPasien, SerahKartuKuning } from '@/services/baksos/PasienController';
+import { BatalSerahKartuKuning, patchPasien, PendingTensi, SerahKartuKuning } from '@/services/baksos/PasienController';
 import { CancelEkg, CancelKK, CancelLab, CancelPemeriksaan, CancelRadiologi, CancelTensi, CapKehadiranEkg, CapKehadiranKartuKuning, CapKehadiranLab, CapKehadiranPemeriksaan, CapKehadiranRadiologi, CapKehadiranTensi, SimpanHasilRadiologi } from '@/services/baksos/ScreeningPasienController';
 import { ParseResponseError } from '@/utils/requests';
 import { CheckCircleTwoTone, ClockCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
@@ -124,6 +124,17 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       }).catch(err => {
         notification["warning"]({ message: `Cancel Tensi Gagal`, description: ParseResponseError(err) });
       })
+  }
+
+  const pendingTensi = () => {
+    if (pasien.id)
+      PendingTensi(pasien.id)
+        .then(data => {
+          notification["success"]({ message: `Pending Tensi Berhasil`, description: data });
+          retrievePasien()
+        }).catch(err => {
+          notification["warning"]({ message: `Pending Tensi Gagal`, description: ParseResponseError(err) });
+        })
   }
   //#endregion
 
@@ -356,6 +367,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
               <FormItemDisplay label='Jenis Kelamin' value={pasien.jenis_kelamin} />
               <FormItemDisplay label='Nomor Tlp' value={pasien.nomor_telepon} />
               <FormItemDisplay label='Alamat' value={pasien.alamat} />
+              {/* <FormItemDisplay label='Last Status' value={pasien.last_status} /> */}
             </Space>
           </Form>
         </ProCard>
@@ -363,16 +375,23 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
           <Card.Grid style={screeningPasienCard}>
             <Title level={5}>Tensi <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_tensi} /></Title>
             {
-              pasienScreening?.telah_lewat_cek_tensi != null ?
-                <Space direction='vertical'>
-                  <Text>{pasienScreening.telah_lewat_cek_tensi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_tensi).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                  <Button type='link' danger size='small' onClick={cancelTensi}>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
-                </Space>
+              pasien.perlu_rescreen && moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day")
+                ?
+                <Text>Pasien Akan Recreening Besok</Text>
                 :
-                <Space direction='vertical'>
-                  <Button danger onClick={() => capHadirTensi(false)}>BATAL</Button>
-                  <Button danger>PENDING</Button>
-                </Space>
+                pasienScreening?.telah_lewat_cek_tensi != null ?
+                  <Space direction='vertical'>
+                    <Text>{pasienScreening.telah_lewat_cek_tensi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_tensi).format('YYYY-MM-DD HH:mm:ss')}</Text>
+                    <Button type='link' danger size='small' onClick={cancelTensi}>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
+                  </Space>
+                  :
+                  <Space direction='vertical'>
+                    <Button danger onClick={() => capHadirTensi(false)}>BATAL</Button>
+                    {
+                      pasien.perlu_rescreen ||
+                      <Button danger onClick={pendingTensi}>PENDING</Button>
+                    }
+                  </Space>
             }
           </Card.Grid>
           <Card.Grid style={screeningPasienCard}>

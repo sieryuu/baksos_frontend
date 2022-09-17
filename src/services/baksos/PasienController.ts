@@ -78,3 +78,8 @@ export async function SerahKartuKuning(pasien_id: number, values: SerahKartuKuni
 export async function BatalSerahKartuKuning(pasien_id: number) {
     return PostRequest<string>(`/pasien/${pasien_id}/batal_serah_kartu_kuning/`)
 }
+
+export async function PendingTensi(pasien_id: number) {
+    return PostRequest<string>(`/pasien/${pasien_id}/pending_tensi/`)
+}
+

@@ -17,6 +17,7 @@ interface PasienType {
     nomor_telepon_keluarga: string;
     daerah: string;
     pulau: string;
+    last_status?: string;
     diagnosa?: string;
 
     nomor_antrian?: string;
