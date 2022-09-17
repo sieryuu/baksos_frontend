@@ -15,6 +15,8 @@ interface PasienType {
     umur: string;
     nama_keluarga: string;
     nomor_telepon_keluarga: string;
+    nama_pendamping: string;
+    nomor_telepon_pendamping: string;
     daerah: string;
     pulau: string;
     last_status?: string;

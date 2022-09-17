@@ -42,9 +42,14 @@ export default defineConfig({
       hideInMenu: true
     },
     {
-      name: 'Report',
-      path: '/report',
-      component: './Report',
+      name: 'Laporan Pendaftaran',
+      path: '/laporan-pendaftaran',
+      component: './LaporanPendaftaran',
+    },
+    {
+      name: 'Laporan Screening',
+      path: '/laporan-screening',
+      component: './LaporanScreening',
     },
     {
       name: 'Login',

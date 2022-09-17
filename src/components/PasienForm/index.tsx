@@ -5,23 +5,26 @@ import {
   DatePicker,
   SubmitButton,
 } from 'formik-antd';
+import { Input as AntdInput } from 'antd'
 import {
   Col,
   Row,
   Divider,
   Space,
   notification,
-  Button
+  Button,
+  InputRef
 } from 'antd'
 import { Formik } from 'formik'
 import * as Yup from 'yup';
 import locale from 'antd/es/date-picker/locale/id_ID';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { queryPenyakit, queryPuskesmas } from '@/services/baksos/ReferensiController';
 import { TYPE_IDENTITAS } from '@/constants';
 import moment from 'moment';
 import { createPasien, patchPasien } from '@/services/baksos/PasienController';
 import { history } from 'umi';
+import { PlusOutlined } from '@ant-design/icons';
 const { TextArea } = Input;
 
 interface PasienFormProps {
@@ -32,9 +35,12 @@ interface PasienFormProps {
 
 const PasienForm: React.FC<PasienFormProps> = (props) => {
   let IsDetailView = !props.IsCreate;
+  const [newTipeIdentitas, setNewTipeIdentitas] = useState('');
   const [puskesmases, setPuskesmases] = useState<PuskesmasType[]>([])
   const [penyakits, setpenyakits] = useState<PenyakitType[]>([])
   const [editState, setEditState] = useState<boolean>(false)
+  const [tipeIdentitases, setTipeIdentitases] = useState<TipeIdentitas[]>(TYPE_IDENTITAS)
+  const inputRef = useRef<InputRef>(null);
 
   useMemo(() => {
     queryPuskesmas().then(data => setPuskesmases(data));
@@ -43,7 +49,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
 
   const initialValues: PasienType = props.Pasien || {
     nomor_seri: '',
-    puskesmas: '',
+    puskesmas: 'JING SI TANG',
     penyakit: '',
     nama: '',
     nomor_identitas: '',
@@ -54,10 +60,12 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
     jenis_kelamin: '',
     alamat: '',
     daerah: '',
-    pulau: '',
+    pulau: 'BATAM',
     nomor_telepon: '',
     nama_keluarga: '',
     nomor_telepon_keluarga: '',
+    nama_pendamping: '',
+    nomor_telepon_pendamping: '',
     umur: ''
   }
 
@@ -102,6 +110,19 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
         actions.setSubmitting(false)
       })
   }
+
+  const onNewTipeIdentitasChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTipeIdentitas(event.target.value);
+  };
+
+  const addItem = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setTipeIdentitases([...tipeIdentitases, { name: newTipeIdentitas }]);
+    setNewTipeIdentitas('');
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
 
   return (
     <Formik<PasienType>
@@ -182,9 +203,29 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="tipe_identitas" label="Tipe Identitas">
-                <Select name='tipe_identitas' showSearch disabled={IsDetailView && editState == false}>
+                <Select
+                  name='tipe_identitas'
+                  showSearch
+                  disabled={IsDetailView && editState == false}
+                  dropdownRender={menu => (
+                    <>
+                      {menu}
+                      <Divider style={{ margin: '8px 0' }} />
+                      <Space style={{ padding: '0 8px 4px' }}>
+                        <AntdInput
+                          placeholder="Tambah Identitas Baru"
+                          ref={inputRef}
+                          value={newTipeIdentitas}
+                          onChange={onNewTipeIdentitasChange}
+                        />
+                        <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                          Add item
+                        </Button>
+                      </Space>
+                    </>
+                  )}>
                   {
-                    TYPE_IDENTITAS.map(tipe_identitas =>
+                    tipeIdentitases.map(tipe_identitas =>
                       <Select.Option key={tipe_identitas.name} value={tipe_identitas.name}>{tipe_identitas.name}</Select.Option>
                     )
                   }
@@ -242,6 +283,16 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
                 <Input name="nomor_telepon_keluarga" disabled={IsDetailView && editState == false} />
               </Form.Item>
             </Col>
+            <Col span={12}>
+              <Form.Item name="nama_pendamping" label="Nama Pendamping yang bisa di hub.">
+                <Input name="nama_pendamping" disabled={IsDetailView && editState == false} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="nomor_telepon_pendamping" label="No. Telp Pendamping">
+                <Input name="nomor_telepon_pendamping" disabled={IsDetailView && editState == false} />
+              </Form.Item>
+            </Col>
             {
               IsDetailView ?
                 <Col span={12}>
@@ -286,4 +337,6 @@ const registerValidationSchema = Yup.object().shape({
   tempat_lahir: Yup.string().required('Wajib Isi'),
   nama_keluarga: Yup.string().required('Wajib Isi'),
   nomor_telepon_keluarga: Yup.string().required('Wajib Isi'),
+  nama_pendamping: Yup.string().required('Wajib Isi'),
+  nomor_telepon_pendamping: Yup.string().required('Wajib Isi'),
 });
