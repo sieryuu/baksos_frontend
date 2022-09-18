@@ -25,6 +25,8 @@ import moment from 'moment';
 import { createPasien, patchPasien } from '@/services/baksos/PasienController';
 import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
+import { ParseResponseError } from '@/utils/requests';
+import _ from 'lodash'
 const { TextArea } = Input;
 
 interface PasienFormProps {
@@ -92,18 +94,9 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
         props.PasienStateChanged && props.PasienStateChanged()
       })
       .catch(err => {
-        let errDescription = ""
-        if (typeof err.response.data === typeof "")
-          errDescription = err.response.data
-        else {
-          for (let k in err.response.data) {
-            errDescription += `${k}: ${err.response.data[k]}`
-          }
-        }
-
         notification["warning"]({
           message: `${isEdit ? 'Pembaharuan' : 'Pendaftaran'} pasien gagal! (${err.response.status})`,
-          description: errDescription,
+          description: ParseResponseError(err),
         });
       })
       .finally(() => {
@@ -244,7 +237,19 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="daerah" label="Kecamatan/Kabupaten/Kota">
-                <Input name="daerah" disabled={IsDetailView && editState == false} />
+                <Select
+                  name='daerah'
+                  showSearch
+                  disabled={IsDetailView && editState == false}
+                >
+                  {
+                    _.uniqBy(puskesmases, (x) => {
+                      return x.pulau
+                    }).map(puskesmas =>
+                      <Select.Option key={puskesmas.pulau} value={puskesmas.pulau}>{puskesmas.pulau}</Select.Option>
+                    )
+                  }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12} />
