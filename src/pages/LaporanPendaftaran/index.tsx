@@ -1,13 +1,14 @@
-import { queryLaporanPendaftaran } from '@/services/baksos/LaporanController';
+import { downloadLaporanPendaftaran, queryLaporanPendaftaran } from '@/services/baksos/LaporanController';
 import { ParseResponseError } from '@/utils/requests';
 import { PageContainer } from '@ant-design/pro-components';
 import { Access, useAccess } from '@umijs/max';
-import { Button, notification } from 'antd';
+import { Button, notification, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import Text from 'antd/lib/typography'
+import { ColumnsType } from 'antd/es/table';
+import { downloadFile } from '@/utils/common';
 
-const ScreeningPage: React.FC = () => {
-  const access = useAccess();
+const LaporanPendaftaranPage: React.FC = () => {
   const [laporanPendaftaran, setLaporanPendaftaran] = useState<any>()
 
   const getLaporanPendaftaran = () => {
@@ -16,7 +17,20 @@ const ScreeningPage: React.FC = () => {
         setLaporanPendaftaran(data)
       })
       .catch(err => {
-        notification["warning"]({ message: 'Penarikan Laporan Screening Gagal', description: ParseResponseError(err) });
+        notification["warning"]({ message: 'Penarikan Laporan Pendaftaran Gagal', description: ParseResponseError(err) });
+      })
+  }
+
+  const downloadReport = () => {
+    downloadLaporanPendaftaran()
+      .then(data => {
+        downloadFile(data)
+      })
+      .catch(err => {
+        notification["warning"]({
+          message: `Download Gagal`,
+          description: ParseResponseError(err),
+        });
       })
   }
 
@@ -26,14 +40,53 @@ const ScreeningPage: React.FC = () => {
 
   if (!laporanPendaftaran) return <Text>Loading</Text>
 
+  const columns: ColumnsType<LaporanPendaftaranType> = [
+    {
+      title: 'DAERAH',
+      dataIndex: 'DAERAH',
+      key: 'DAERAH',
+    },
+    {
+      title: 'PYTERIGIUM',
+      dataIndex: 'PYTERIGIUM',
+      key: 'PYTERIGIUM',
+    },
+    {
+      title: 'KATARAK',
+      dataIndex: 'KATARAK',
+      key: 'KATARAK',
+    },
+    {
+      title: 'BENJOLAN',
+      dataIndex: 'BENJOLAN',
+      key: 'BENJOLAN',
+    },
+    {
+      title: 'HERNIA',
+      dataIndex: 'HERNIA',
+      key: 'HERNIA',
+    },
+    {
+      title: 'SUMBING',
+      dataIndex: 'SUMBING',
+      key: 'SUMBING',
+    },
+  ];
+
+  const data: LaporanPendaftaranType[] = laporanPendaftaran;
+
   return (
-    <PageContainer ghost>
-      {/* <Access accessible={access.canSeeAdmin}>
-        <Button>只有 Admin 可以看到这个按钮</Button>
-      </Access> */}
+    <PageContainer ghost extra={[
+      <Button key="download_report" onClick={downloadReport}>Download Report</Button>,
+    ]}>
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey="id"
+      />
 
     </PageContainer>
   );
 };
 
-export default ScreeningPage;
+export default LaporanPendaftaranPage;

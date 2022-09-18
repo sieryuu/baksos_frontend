@@ -47,6 +47,11 @@ export default defineConfig({
       component: './LaporanPendaftaran',
     },
     {
+      name: 'Laporan Kehadiran',
+      path: '/laporan-kehadiran',
+      component: './LaporanKehadiran',
+    },
+    {
       name: 'Laporan Screening',
       path: '/laporan-screening',
       component: './LaporanScreening',

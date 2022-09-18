@@ -1,4 +1,4 @@
-import { queryLaporanScreening } from '@/services/baksos/LaporanController';
+import { downloadLaporanScreening, queryLaporanScreening } from '@/services/baksos/LaporanController';
 import { ParseResponseError } from '@/utils/requests';
 import { PageContainer } from '@ant-design/pro-components';
 import { Access, useAccess } from '@umijs/max';
@@ -6,8 +6,9 @@ import { Button, notification, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import Text from 'antd/lib/typography'
 import { ColumnsType } from 'antd/es/table';
+import { downloadFile } from '@/utils/common';
 
-const ScreeningPage: React.FC = () => {
+const LaporanScreeningPage: React.FC = () => {
   const [laporanScreening, setLaporanScreening] = useState<any>()
 
   const getLaporanScreening = () => {
@@ -17,6 +18,19 @@ const ScreeningPage: React.FC = () => {
       })
       .catch(err => {
         notification["warning"]({ message: 'Penarikan Laporan Screening Gagal', description: ParseResponseError(err) });
+      })
+  }
+
+  const downloadReport = () => {
+    downloadLaporanScreening()
+      .then(data => {
+        downloadFile(data)
+      })
+      .catch(err => {
+        notification["warning"]({
+          message: `Download Gagal`,
+          description: ParseResponseError(err),
+        });
       })
   }
 
@@ -38,54 +52,59 @@ const ScreeningPage: React.FC = () => {
       key: 'total_hadir',
     },
     {
-      title: 'Total Pasien Hadir',
-      dataIndex: 'total_pasien_hadir',
-      key: 'total_pasien_hadir',
+      title: 'Total Pasien Lolos Kk',
+      dataIndex: 'total_pasien_lolos_kk',
+      key: 'total_pasien_lolos_kk'
     },
     {
-      title: 'Total Kehadiran Hari Pertama',
-      dataIndex: 'total_kehadiran_hari_pertama',
-      key: 'total_kehadiran_hari_pertama',
+      title: 'Total Pasien Lolos Kk Hari Pertama',
+      dataIndex: 'total_pasien_lolos_kk_hari_pertama',
+      key: 'total_pasien_lolos_kk_hari_pertama'
     },
     {
-      title: 'Total Kehadiran Pendaftaran',
-      dataIndex: 'total_kehadiran_pendaftaran',
-      key: 'total_kehadiran_pendaftaran',
+      title: 'Total Pasien Lolos Kk Hari Kedua',
+      dataIndex: 'total_pasien_lolos_kk_hari_kedua',
+      key: 'total_pasien_lolos_kk_hari_kedua'
     },
     {
-      title: 'Total Kehadiran Fisik',
-      dataIndex: 'total_kehadiran_fisik',
-      key: 'total_kehadiran_fisik',
+      title: 'Total Tidak Lolos',
+      dataIndex: 'total_tidak_lolos',
+      key: 'total_tidak_lolos'
     },
     {
-      title: 'Total Kehadiran Mata',
-      dataIndex: 'total_kehadiran_mata',
-      key: 'total_kehadiran_mata',
+      title: 'Tidak Lulus Tensi',
+      dataIndex: 'tidak_lulus_tensi',
+      key: 'tidak_lulus_tensi'
     },
     {
-      title: 'Total Kehadiran Lab',
-      dataIndex: 'total_kehadiran_lab',
-      key: 'total_kehadiran_lab',
+      title: 'Tidak Lulus Fisik',
+      dataIndex: 'tidak_lulus_fisik',
+      key: 'tidak_lulus_fisik'
     },
     {
-      title: 'Total Kehadiran Radiologi',
-      dataIndex: 'total_kehadiran_radiologi',
-      key: 'total_kehadiran_radiologi',
+      title: 'Tidak Lulus Mata',
+      dataIndex: 'tidak_lulus_mata',
+      key: 'tidak_lulus_mata'
     },
     {
-      title: 'Total Kehadiran EKG',
-      dataIndex: 'total_kehadiran_ekg',
-      key: 'total_kehadiran_ekg',
+      title: 'Tidak Lulus Kk',
+      dataIndex: 'tidak_lulus_kk',
+      key: 'tidak_lulus_kk'
     },
     {
-      title: 'Total Kehadiran Hari Kedua',
-      dataIndex: 'total_kehadiran_hari_kedua',
-      key: 'total_kehadiran_hari_kedua',
+      title: 'Total Pending Kk',
+      dataIndex: 'total_pending_kk',
+      key: 'total_pending_kk'
     },
     {
-      title: 'Total Kehadiran Rescreening',
-      dataIndex: 'total_kehadiran_rescreening',
-      key: 'total_kehadiran_rescreening',
+      title: 'Lolos Pending Hari Pertama',
+      dataIndex: 'lolos_pending_hari_pertama',
+      key: 'lolos_pending_hari_pertama'
+    },
+    {
+      title: 'Lolos Pending Hari Kedua',
+      dataIndex: 'lolos_pending_hari_kedua',
+      key: 'lolos_pending_hari_kedua'
     },
   ];
 
@@ -97,7 +116,9 @@ const ScreeningPage: React.FC = () => {
   });
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost extra={[
+      <Button key="download_report" onClick={downloadReport}>Download Report</Button>,
+    ]}>
       <Table
         columns={columns}
         dataSource={data}
@@ -108,4 +129,4 @@ const ScreeningPage: React.FC = () => {
   );
 };
 
-export default ScreeningPage;
+export default LaporanScreeningPage;

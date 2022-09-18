@@ -168,7 +168,6 @@ const ListPasienPage: React.FC = () => {
             addonBefore="Nama / No. Identitas / No. Telepon"
             placeholder=""
             allowClear
-            autoFocus
             onSearch={searchPasienByParam}
             style={{ width: 800 }}
           />
