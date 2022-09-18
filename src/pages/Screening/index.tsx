@@ -89,10 +89,18 @@ const ScreeningPage: React.FC = () => {
         <ProCard title="Pencarian" layout="default" bordered >
           <Space>
             <Radio.Group onChange={handlePenyakitChanged} value={selectedPenyakit} buttonStyle="solid">
-              <Radio.Button value="KATARAK"><Text strong style={{ color: "red" }}>Katarak</Text></Radio.Button>
-              <Radio.Button value="BENJOLAN"><Text strong style={{ color: "green" }}>Benjolan</Text></Radio.Button>
-              <Radio.Button value="HERNIA"><Text strong style={{ color: "blue" }}>Hernia</Text></Radio.Button>
-              <Radio.Button value="SUMBING"><Text strong style={{ color: "orange" }}>Sumbing</Text></Radio.Button>
+              <Radio.Button value="KATARAK" style={{ backgroundColor: selectedPenyakit == "KATARAK" ? "red" : "white" }}>
+                <Text strong style={{ color: selectedPenyakit == "KATARAK" ? "white" : "red" }}>Katarak</Text>
+              </Radio.Button>
+              <Radio.Button value="BENJOLAN" style={{ backgroundColor: selectedPenyakit == "BENJOLAN" ? "green" : "white" }}>
+                <Text strong style={{ color: selectedPenyakit == "BENJOLAN" ? "white" : "green" }}>Benjolan</Text>
+              </Radio.Button>
+              <Radio.Button value="HERNIA" style={{ backgroundColor: selectedPenyakit == "HERNIA" ? "blue" : "white" }}>
+                <Text strong style={{ color: selectedPenyakit == "HERNIA" ? "white" : "blue" }}>Hernia</Text>
+              </Radio.Button>
+              <Radio.Button value="SUMBING" style={{ backgroundColor: selectedPenyakit == "SUMBING" ? "orange" : "white" }}>
+                <Text strong style={{ color: selectedPenyakit == "SUMBING" ? "white" : "orange" }}>Sumbing</Text>
+              </Radio.Button>
             </Radio.Group>
             <Search
               addonBefore="No. Antrian"
