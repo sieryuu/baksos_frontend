@@ -52,6 +52,10 @@ export async function updatePasienHadir(id: number, nomor_antrian: string) {
     })
 }
 
+export async function batalNomorAntrian(id: number) {
+    return PostRequest<string>(`/pasien/${id}/batal_nomor_antrian/`)
+}
+
 export async function getPasienTemplate() {
     const token = GetCurrentUserToken()
     return request<AxiosResponse>(BAKSOS_BACKEND_URL + '/pasien/template/', {

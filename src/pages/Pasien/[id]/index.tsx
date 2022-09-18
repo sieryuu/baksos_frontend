@@ -8,13 +8,14 @@ import {
 import PasienForm from '@/components/PasienForm';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from '@umijs/max';
-import { queryPasienById, updatePasienHadir } from '@/services/baksos/PasienController';
+import { batalNomorAntrian, queryPasienById, updatePasienHadir } from '@/services/baksos/PasienController';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import moment from 'moment';
 import { history } from 'umi';
 import FormStatusPasien from '@/print_template/FormStatusPasien';
 import ReactToPrint from 'react-to-print';
+import { ParseResponseError } from '@/utils/requests';
 
 const { Text, Link } = Typography;
 
@@ -77,8 +78,21 @@ const PasienDetailPage: React.FC = () => {
   if (!pasien) {
     return <span>loading...</span>
   }
+
+  const cancelNomorAntrian = () => {
+    if (pasien.id)
+      batalNomorAntrian(pasien.id)
+        .then(data => {
+          notification["success"]({ message: `Cancel Kehadiran Pasien Berhasil`, description: data });
+          retrievePasien()
+        }).catch(err => {
+          notification["warning"]({ message: `Cancel Kehadiran Pasien Gagal`, description: ParseResponseError(err) });
+        })
+  }
+
   const pasienSudahDaftar = pasien.nomor_antrian != null
-  const pasienPerluRescreenHariIni = pasien.perlu_rescreen && (moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day") == false)
+  const pasienAbsenHariIni = (moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day"))
+  const pasienPerluRescreenHariIni = pasien.perlu_rescreen && (pasienAbsenHariIni == false)
 
   return (
     <PageContainer ghost extra={[
@@ -103,7 +117,7 @@ const PasienDetailPage: React.FC = () => {
                   }
                 </Row>
                 <Row justify='center'>
-                  <Space>
+                  <Space style={{ marginBottom: 0 }}>
                     <Form.Item name="nomor_antrian" label="Nomor Antrian">
                       <Input name='nomor_antrian' style={{ width: 150 }} autoFocus disabled={pasienSudahDaftar && !isEditNomorAntrian && !pasienPerluRescreenHariIni} />
                     </Form.Item>
@@ -122,7 +136,14 @@ const PasienDetailPage: React.FC = () => {
                           <SubmitButton type='primary'>{pasien.perlu_rescreen ? "RESCREEN" : "Simpan & Hadir"}</SubmitButton>
                         </Form.Item>
                     }
+
                   </Space>
+                </Row>
+                <Row justify='center'>
+                  {
+                    pasienSudahDaftar && pasienAbsenHariIni &&
+                    <Button type='link' danger size='small' onClick={cancelNomorAntrian}>Cancel Kehadiran</Button>
+                  }
                 </Row>
               </Form>
             </Formik>
