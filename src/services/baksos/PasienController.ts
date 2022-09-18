@@ -4,13 +4,22 @@ import { AxiosResponse, request } from '@umijs/max';
 import moment from 'moment';
 import { GetCurrentUserToken } from './UserController';
 
-export async function queryPasienList() {
-    return GetRequest<PasienType[]>('/pasien/');
+export async function queryPasienList(page: number, pageSize: number) {
+    return GetRequest<PaginationType<PasienType>>('/pasien/', {
+        offset: page - 1,
+        limit: pageSize
+    });
 }
 
 export async function queryPasienByNoSeri(no_seri: string) {
     return GetRequest<PasienType[]>('/pasien/', {
         nomor_seri: no_seri
+    });
+}
+
+export async function searchPasien(param: string) {
+    return GetRequest<PasienType[]>('/pasien/', {
+        search: param
     });
 }
 

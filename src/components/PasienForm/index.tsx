@@ -145,9 +145,11 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
                   }}
                 >
                   {
-                    puskesmases.map(puskesmas =>
-                      <Select.Option key={puskesmas.puskesmas} value={puskesmas.puskesmas}>{puskesmas.puskesmas}</Select.Option>
-                    )
+                    _.
+                      sortBy(puskesmases, (x) => x.puskesmas)
+                      .map(puskesmas =>
+                        <Select.Option key={puskesmas.puskesmas} value={puskesmas.puskesmas}>{puskesmas.puskesmas}</Select.Option>
+                      )
                   }
                 </Select>
               </Form.Item>
@@ -168,9 +170,11 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
               <Form.Item name="penyakit" label="Jenis Penyakit">
                 <Select name='penyakit' showSearch disabled={IsDetailView && editState == false}>
                   {
-                    penyakits.map(penyakit =>
-                      <Select.Option key={penyakit.nama} value={penyakit.nama}>{penyakit.nama}</Select.Option>
-                    )
+                    _
+                      .sortBy(penyakits, (x) => x.nama)
+                      .map(penyakit =>
+                        <Select.Option key={penyakit.nama} value={penyakit.nama}>{penyakit.nama}</Select.Option>
+                      )
                   }
                 </Select>
               </Form.Item>
@@ -218,9 +222,11 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
                     </>
                   )}>
                   {
-                    tipeIdentitases.map(tipe_identitas =>
-                      <Select.Option key={tipe_identitas.name} value={tipe_identitas.name}>{tipe_identitas.name}</Select.Option>
-                    )
+                    _
+                      .sortBy(tipeIdentitases, x => x.name)
+                      .map(tipe_identitas =>
+                        <Select.Option key={tipe_identitas.name} value={tipe_identitas.name}>{tipe_identitas.name}</Select.Option>
+                      )
                   }
                 </Select>
               </Form.Item>

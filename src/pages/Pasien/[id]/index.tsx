@@ -90,7 +90,7 @@ const PasienDetailPage: React.FC = () => {
             <Formik
               enableReinitialize
               initialValues={{
-                nomor_antrian: pasien.nomor_antrian || ''
+                nomor_antrian: pasienPerluRescreenHariIni ? "" : (pasien.nomor_antrian || '')
               }}
               onSubmit={handleSubmit}
               validationSchema={kehadiranValidationSchema}

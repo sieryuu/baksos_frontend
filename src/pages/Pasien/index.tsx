@@ -1,30 +1,51 @@
 import { PageContainer } from '@ant-design/pro-components';
 import type { ColumnsType } from 'antd/es/table';
-import { Button, Card, Input, notification, Space, Table, Upload } from 'antd';
+import { Button, Card, Input, notification, Space, Table, TablePaginationConfig, Upload } from 'antd';
 import { history } from 'umi';
 import Title from 'antd/lib/typography/Title';
-import { getPasienTemplate, importPasien, queryPasienByNoSeri, queryPasienList } from '@/services/baksos/PasienController';
+import { getPasienTemplate, importPasien, queryPasienByNoSeri, queryPasienList, searchPasien } from '@/services/baksos/PasienController';
 import { useEffect, useState } from 'react';
 import { downloadFile } from '@/utils/common';
 import { UploadOutlined } from '@ant-design/icons';
 import { AxiosResponse } from '@umijs/max';
+import { FilterValue, SorterResult } from 'antd/es/table/interface';
 
 const { Search } = Input
+
+interface TableParams {
+  pagination?: TablePaginationConfig;
+  sortField?: string;
+  sortOrder?: string;
+  filters?: Record<string, FilterValue>;
+}
 
 const ListPasienPage: React.FC = () => {
   // const access = useAccess();
   const [pasiens, setPasiens] = useState<PasienType[]>([]);
+  const [tableParams, setTableParams] = useState<TableParams>({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  });
 
   const getPasienList = () => {
-    queryPasienList()
+    queryPasienList(tableParams.pagination?.current || 1, tableParams.pagination?.pageSize || 10)
       .then(data => {
-        setPasiens(data)
+        setPasiens(data.results)
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: data.count
+          }
+        })
       })
   }
 
   useEffect(() => {
     getPasienList();
-  }, [])
+  }, [tableParams.pagination?.current])
 
   const downloadTemplate = () => {
     getPasienTemplate().then((data) => {
@@ -58,12 +79,19 @@ const ListPasienPage: React.FC = () => {
       })
   }
 
-  const searchPasien = (value: string) => {
+  const searchPasienByNoSeri = (value: string) => {
     queryPasienByNoSeri(value)
       .then(data => {
         if (data.length == 1) {
           history.push(`/pasien/${data[0].id}`)
         }
+        setPasiens(data)
+      });
+  }
+
+  const searchPasienByParam = (value: string) => {
+    searchPasien(value)
+      .then(data => {
         setPasiens(data)
       });
   }
@@ -127,14 +155,22 @@ const ListPasienPage: React.FC = () => {
     ]}>
       <Card>
         <Title level={5}>Pencarian:</Title>
-        <Space>
+        <Space direction='vertical'>
           <Search
             addonBefore="Nomor Seri Formulir"
             placeholder="masukan nomor seri formulir..."
             allowClear
             autoFocus
-            onSearch={searchPasien}
-            style={{ width: 400 }}
+            onSearch={searchPasienByNoSeri}
+            style={{ width: 600 }}
+          />
+          <Search
+            addonBefore="Nama / No. Identitas / No. Telepon"
+            placeholder=""
+            allowClear
+            autoFocus
+            onSearch={searchPasienByParam}
+            style={{ width: 800 }}
           />
         </Space>
       </Card>
@@ -142,7 +178,13 @@ const ListPasienPage: React.FC = () => {
         <Table
           columns={columns}
           dataSource={data}
+          pagination={tableParams.pagination}
           rowKey="id"
+          onChange={(pagination) => {
+            setTableParams({
+              pagination,
+            });
+          }}
           onRow={(record, rowIndex) => {
             return {
               onClick: event => history.push(`/pasien/${record.id}`)
