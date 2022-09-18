@@ -27,6 +27,7 @@ import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
 import { ParseResponseError } from '@/utils/requests';
 import _ from 'lodash'
+import Paragraph from 'antd/lib/typography/Paragraph';
 const { TextArea } = Input;
 
 interface PasienFormProps {
@@ -133,6 +134,9 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
           labelWrap
         >
           <Row>
+            <Col span={24}>
+              <Paragraph style={{ textAlign: "right" }} italic>Catatan: Semua kolom di bawah ini wajib diisi.</Paragraph>
+            </Col>
             <Col span={12}>
               <Form.Item name="puskesmas" label="Lokasi Pendaftaran">
                 <Select
@@ -156,7 +160,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="nomor_seri" label="Nomor Seri Formulir">
-                <Input name="nomor_seri" style={{ width: '100px' }} disabled={IsDetailView && editState == false} />
+                <Input name="nomor_seri" style={{ width: '200px' }} disabled={IsDetailView && editState == false} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -187,9 +191,15 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="jenis_kelamin" label="Jenis Kelamin">
-                <Select name='jenis_kelamin' showSearch disabled={IsDetailView && editState == false}>
-                  <Select.Option value="L">Laki Laki</Select.Option>
-                  <Select.Option value="P">Perempuan</Select.Option>
+                <Select
+                  name='jenis_kelamin'
+                  showSearch
+                  disabled={IsDetailView && editState == false}
+                  filterOption={(inputValue, option) =>
+                    option && option.children ? option.children.toString().toLowerCase().includes(inputValue.toLowerCase()) : false
+                  }>
+                  <Select.Option key={"Laki Laki"} value={"L"}>Laki Laki</Select.Option>
+                  <Select.Option key={"Perempuan"} value={"P"}>Perempuan</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -270,6 +280,8 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
                   <DatePicker
                     name='tanggal_lahir_moment'
                     locale={locale}
+                    style={{ width: 200 }}
+                    placeholder="YYYY-MM-DD (Pilih Tanggal)"
                     disabled={IsDetailView && editState == false}
                     onChange={(date, dateString) => {
                       if (dateString) {
@@ -295,7 +307,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="nama_pendamping" label="Nama Pendamping yang bisa di hub.">
+              <Form.Item name="nama_pendamping" label="Nama Pendamping">
                 <Input name="nama_pendamping" disabled={IsDetailView && editState == false} />
               </Form.Item>
             </Col>
