@@ -7,7 +7,7 @@ import {
 } from 'formik-antd';
 import PasienForm from '@/components/PasienForm';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from '@umijs/max';
+import { Access, useAccess, useParams } from '@umijs/max';
 import { batalNomorAntrian, queryPasienById, updatePasienHadir } from '@/services/baksos/PasienController';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -24,6 +24,7 @@ const PasienDetailPage: React.FC = () => {
   const [pasien, setPasien] = useState<PasienType>()
   const [isEditNomorAntrian, setIsEditNomorAntrian] = useState<boolean>(false)
   const urlParams = useParams()
+  const access = useAccess()
 
   const retrievePasien = () => {
     if (urlParams.id)
@@ -119,22 +120,24 @@ const PasienDetailPage: React.FC = () => {
                 <Row justify='center'>
                   <Space style={{ marginBottom: 0 }}>
                     <Form.Item name="nomor_antrian" label="Nomor Antrian">
-                      <Input name='nomor_antrian' style={{ width: 150 }} autoFocus disabled={pasienSudahDaftar && !isEditNomorAntrian && !pasienPerluRescreenHariIni} />
+                      <Input name='nomor_antrian' style={{ width: 150 }} autoFocus disabled={!access.canSeePendaftaran || (pasienSudahDaftar && !isEditNomorAntrian && !pasienPerluRescreenHariIni)} />
                     </Form.Item>
                     {
                       pasienSudahDaftar && !pasienPerluRescreenHariIni ?
-                        <>
+                        <Access accessible={access.canSeePendaftaran}>
                           <Form.Item name="print">
                             <ReactToPrint
                               trigger={() => <Button type='primary'>PRINT FORM STATUS SCREENING PASIEN</Button>}
                               content={() => printRef.current}
                             />
                           </Form.Item>
-                        </>
+                        </Access>
                         :
-                        <Form.Item name="submit">
-                          <SubmitButton type='primary'>{pasien.perlu_rescreen ? "RESCREEN" : "Simpan & Hadir"}</SubmitButton>
-                        </Form.Item>
+                        <Access accessible={access.canSeePendaftaran}>
+                          <Form.Item name="submit">
+                            <SubmitButton type='primary'>{pasien.perlu_rescreen ? "RESCREEN" : "Simpan & Hadir"}</SubmitButton>
+                          </Form.Item>
+                        </Access>
                     }
 
                   </Space>
@@ -142,7 +145,9 @@ const PasienDetailPage: React.FC = () => {
                 <Row justify='center'>
                   {
                     pasienSudahDaftar && pasienAbsenHariIni &&
-                    <Button type='link' danger size='small' onClick={cancelNomorAntrian}>Cancel Kehadiran</Button>
+                    <Access accessible={access.canSeeAdmin}>
+                      <Button type='link' danger size='small' onClick={cancelNomorAntrian}>Cancel Kehadiran</Button>
+                    </Access>
                   }
                 </Row>
               </Form>

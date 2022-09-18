@@ -15,6 +15,8 @@ import KartuKuningTemplate from '@/print_template/KartuKuningTemplate';
 import ReactToPrint from 'react-to-print';
 import KartuPendingTemplate from '@/print_template/KartuPendingTemplate';
 import InfoConsentTemplate from '@/print_template/InfoConsentTemplate';
+import { queryPasienDetail } from '@/services/baksos/PasienDetailController';
+import { Access, useAccess } from '@umijs/max';
 
 const { TextArea } = Input;
 const { Text } = Typography
@@ -79,8 +81,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   const kartuKuningRef = useRef(null);
   const kartuPendingRef = useRef(null);
   const printInfoConsentRef = useRef(null);
+  const access = useAccess()
   const [kartuKuning, setKartuKuning] = useState<KartuKuningType>()
+  const [detailPasien, setDetailPasien] = useState<DetailPasienType>()
   const [isLabModalOpen, setIsLabModalOpen] = useState(false)
+  const [isHasilLabModalOpen, setIsHasilLabModalOpen] = useState(false)
   const [isRadiologiModalOpen, setIsRadiologiModalOpen] = useState(false)
   const [isLolosKKModalOpen, setIsLolosKKModalOpen] = useState(false)
   const [isPendingKKModalOpen, setIsPendingKKModalOpen] = useState(false)
@@ -97,8 +102,21 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
     }
   }
 
+  const retrieveDetailPasien = () => {
+    if (pasien.id) {
+      setDetailPasien(undefined)
+      queryPasienDetail(pasien.id)
+        .then(data => {
+          if (data.length > 0) {
+            setDetailPasien(data[0])
+          }
+        })
+    }
+  }
+
   useEffect(() => {
     retrievePasienKartuKuning()
+    retrieveDetailPasien()
   }, [])
 
   //#region Tensi
@@ -184,7 +202,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       hadir: true,
       perlu_radiologi: pasien && pasien.perlu_radiologi || false,
       perlu_ekg: pasien && pasien.perlu_ekg || false,
-      diagnosa: (pasien.penyakit !== "BENJOLAN") ? pasien.penyakit : ""
+      diagnosa: (pasien.penyakit !== "BENJOLAN") ? (pasien.diagnosa || "") : ""
     },
     onSubmit: values => {
       if (pasien && pasien.id) {
@@ -386,18 +404,24 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                         pasienScreening?.telah_lewat_cek_tensi != null ?
                           <Space direction='vertical'>
                             <Text>{pasienScreening.telah_lewat_cek_tensi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_tensi).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                            <Button type='link' danger size='small' onClick={cancelTensi}>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
+                            <Access accessible={access.canSeeAdmin}>
+                              <Button type='link' danger size='small' onClick={cancelTensi}>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
+                            </Access>
                           </Space>
                           :
                           <Space direction='vertical'>
-                            <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirTensi(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
-                              <Button danger>BATAL</Button>
-                            </Popconfirm>
+                            <Access accessible={access.canSeePendaftaran}>
+                              <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirTensi(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
+                                <Button danger>BATAL</Button>
+                              </Popconfirm>
+                            </Access>
                             {
                               pasien.perlu_rescreen ||
-                              <Popconfirm title="Apakah yakin untuk PENDING TENSI pasien?" onConfirm={pendingTensi} okText="Iya" cancelText="Tidak Jadi">
-                                <Button danger>PENDING</Button>
-                              </Popconfirm>
+                              <Access accessible={access.canSeePendaftaran}>
+                                <Popconfirm title="Apakah yakin untuk PENDING TENSI pasien?" onConfirm={pendingTensi} okText="Iya" cancelText="Tidak Jadi">
+                                  <Button danger>PENDING</Button>
+                                </Popconfirm>
+                              </Access>
                             }
                           </Space>
                     }
@@ -408,14 +432,20 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                       pasienScreening?.telah_lewat_pemeriksaan != null ?
                         <Space direction='vertical'>
                           <Text>{pasienScreening.telah_lewat_pemeriksaan ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_pemeriksaan).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                          <Button type='link' danger size='small' onClick={cancelPemeriksaan}>Cancel {pasienScreening.telah_lewat_pemeriksaan ? 'Kehadiran' : 'Batal'} </Button>
+                          <Access accessible={access.canSeeAdmin}>
+                            <Button type='link' danger size='small' onClick={cancelPemeriksaan}>Cancel {pasienScreening.telah_lewat_pemeriksaan ? 'Kehadiran' : 'Batal'} </Button>
+                          </Access>
                         </Space>
                         :
                         <Space direction='vertical'>
-                          <Button type='primary' onClick={() => capHadirPemeriksaan(true)}>HADIR</Button>
-                          <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirPemeriksaan(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
-                            <Button danger>BATAL</Button>
-                          </Popconfirm>
+                          <Access accessible={access.canSeePemeriksaan}>
+                            <Button type='primary' onClick={() => capHadirPemeriksaan(true)}>HADIR</Button>
+                          </Access>
+                          <Access accessible={access.canSeePemeriksaan}>
+                            <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirPemeriksaan(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
+                              <Button danger>BATAL</Button>
+                            </Popconfirm>
+                          </Access>
                         </Space>
                     }
                   </Card.Grid>
@@ -425,11 +455,15 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                       pasienScreening?.telah_lewat_cek_lab != null ?
                         <Space direction='vertical'>
                           <Text>{pasienScreening.telah_lewat_cek_lab ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_lab).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                          <Button type='link' danger size='small' onClick={cancelLab}>Cancel {pasienScreening.telah_lewat_cek_lab ? 'Kehadiran' : 'Batal'} </Button>
+                          <Access accessible={access.canSeeAdmin}>
+                            <Button type='link' danger size='small' onClick={cancelLab}>Cancel {pasienScreening.telah_lewat_cek_lab ? 'Kehadiran' : 'Batal'} </Button>
+                          </Access>
                         </Space>
                         :
                         <Space direction='vertical'>
-                          <Button type='primary' onClick={() => setIsLabModalOpen(true)}>HADIR</Button>
+                          <Access accessible={access.canSeeLab}>
+                            <Button type='primary' onClick={() => setIsLabModalOpen(true)}>HADIR</Button>
+                          </Access>
                         </Space>
                     }
                   </Card.Grid>
@@ -439,11 +473,15 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                       pasienScreening?.telah_lewat_cek_radiologi != null ?
                         <Space direction='vertical'>
                           <Text>{pasienScreening.telah_lewat_cek_radiologi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_radiologi).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                          <Button type='link' danger size='small' onClick={cancelRadiologi}>Cancel {pasienScreening.telah_lewat_cek_radiologi ? 'Kehadiran' : 'Batal'} </Button>
+                          <Access accessible={access.canSeeAdmin}>
+                            <Button type='link' danger size='small' onClick={cancelRadiologi}>Cancel {pasienScreening.telah_lewat_cek_radiologi ? 'Kehadiran' : 'Batal'} </Button>
+                          </Access>
                         </Space>
                         :
                         <Space direction='vertical'>
-                          <Button type='primary' disabled={!pasien.perlu_radiologi} onClick={() => capHadirRadiologi(true)}>HADIR</Button>
+                          <Access accessible={access.canSeeRontgen}>
+                            <Button type='primary' disabled={!pasien.perlu_radiologi} onClick={() => capHadirRadiologi(true)}>HADIR</Button>
+                          </Access>
                         </Space>
                     }
                   </Card.Grid>
@@ -453,11 +491,15 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                       pasienScreening?.telah_lewat_cek_ekg != null ?
                         <Space direction='vertical'>
                           <Text>{pasienScreening.telah_lewat_cek_ekg ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_ekg).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                          <Button type='link' danger size='small' onClick={cancelEkg}>Cancel {pasienScreening.telah_lewat_cek_ekg ? 'Kehadiran' : 'Batal'} </Button>
+                          <Access accessible={access.canSeeAdmin}>
+                            <Button type='link' danger size='small' onClick={cancelEkg}>Cancel {pasienScreening.telah_lewat_cek_ekg ? 'Kehadiran' : 'Batal'} </Button>
+                          </Access>
                         </Space>
                         :
                         <Space direction='vertical'>
-                          <Button type='primary' disabled={!pasien.perlu_ekg} onClick={() => capHadirEkg(true)}>HADIR</Button>
+                          <Access accessible={access.canSeeEkg}>
+                            <Button type='primary' disabled={!pasien.perlu_ekg} onClick={() => capHadirEkg(true)}>HADIR</Button>
+                          </Access>
                         </Space>
                     }
                   </Card.Grid>
@@ -467,11 +509,15 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                       pasienScreening?.telah_lewat_cek_kartu_kuning != null ?
                         <Space direction='vertical'>
                           <Text>{pasienScreening.telah_lewat_cek_kartu_kuning ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_kartu_kuning).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                          <Button type='link' danger size='small' onClick={cancelKartuKuning}>Cancel {pasienScreening.telah_lewat_cek_kartu_kuning ? 'Kehadiran' : 'Batal'} </Button>
+                          <Access accessible={access.canSeeAdmin}>
+                            <Button type='link' danger size='small' onClick={cancelKartuKuning}>Cancel {pasienScreening.telah_lewat_cek_kartu_kuning ? 'Kehadiran' : 'Batal'} </Button>
+                          </Access>
                         </Space>
                         :
                         <Space direction='vertical'>
-                          <Button type='primary' onClick={() => capHadirKartuKuning(true)}>HADIR</Button>
+                          <Access accessible={access.canSeeKartuKuning}>
+                            <Button type='primary' onClick={() => capHadirKartuKuning(true)}>HADIR</Button>
+                          </Access>
                         </Space>
                     }
                   </Card.Grid>
@@ -482,7 +528,9 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                       <Space>
                         <Checkbox disabled checked={pasien.perlu_radiologi}>RADIOLOGY</Checkbox>
                         <Checkbox disabled checked={pasien.perlu_ekg}>EKG</Checkbox>
-                        <Button type='primary' onClick={() => setIsLabModalOpen(true)}>Edit</Button>
+                        <Access accessible={access.canSeeLab || access.canSeeKartuKuning}>
+                          <Button type='primary' onClick={() => setIsLabModalOpen(true)}>Edit</Button>
+                        </Access>
                       </Space>
                       :
                       <Text>Belum hadir LAB</Text>
@@ -500,7 +548,9 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                           <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
                             <Input name='nomor_kertas_penyerahan' disabled value={pasienScreening.nomor_kertas_penyerahan} />
                           </Form.Item>
-                          <Button type='primary' onClick={() => setIsRadiologiModalOpen(true)}>Edit</Button>
+                          <Access accessible={access.canSeeRontgen}>
+                            <Button type='primary' onClick={() => setIsRadiologiModalOpen(true)}>Edit</Button>
+                          </Access>
                         </Space>
                       </Form>
                       :
@@ -534,7 +584,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                         }
                         {
                           kartuKuning.status == "LOLOS" ?
-                            <>
+                            <Access accessible={access.canSeeKartuKuning}>
                               <Form.Item style={{ marginBottom: "10px" }}>
                                 <ReactToPrint
                                   trigger={() => <Button type='primary' >PRINT KARTU KUNING</Button>}
@@ -547,36 +597,42 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                                   content={() => printInfoConsentRef.current}
                                 />
                               </Form.Item>
-                            </>
+                            </Access>
                             :
                             kartuKuning.status == "PENDING" ?
-                              <Form.Item style={{ marginBottom: "10px" }}>
-                                <ReactToPrint
-                                  trigger={() => <Button type='primary' >PRINT KARTU PENDING</Button>}
-                                  content={() => kartuPendingRef.current}
-                                />
-                              </Form.Item>
+                              <Access accessible={access.canSeeKartuKuning}>
+                                <Form.Item style={{ marginBottom: "10px" }}>
+                                  <ReactToPrint
+                                    trigger={() => <Button type='primary' >PRINT KARTU PENDING</Button>}
+                                    content={() => kartuPendingRef.current}
+                                  />
+                                </Form.Item>
+                              </Access>
                               : <></>
                         }
-                        <Form.Item>
-                          <Button type='link' danger size='small' onClick={cancelHasilKartuKuning}>Cancel Hasil Kartu Kuning</Button>
-                        </Form.Item>
+                        <Access accessible={access.canSeeAdmin}>
+                          <Form.Item>
+                            <Button type='link' danger size='small' onClick={cancelHasilKartuKuning}>Cancel Hasil Kartu Kuning</Button>
+                          </Form.Item>
+                        </Access>
                       </Form>
                       :
                       pasienScreening.telah_lewat_cek_kartu_kuning != null ?
-                        <Space direction='vertical'>
-                          <Button type='primary' onClick={() => setIsLolosKKModalOpen(true)}>LOLOS</Button>
-                          <Button onClick={() => setIsPendingKKModalOpen(true)}>PENDING</Button>
-                          <Popconfirm title="Apakah yakin untuk GAGALIN pasien?" onConfirm={() => {
-                            kartuKuningFormik.setFieldValue('status', 'GAGAL')
-                            kartuKuningFormik.setFieldValue('tanggal', null)
-                            kartuKuningFormik.setFieldValue('jam', null)
-                            kartuKuningFormik.setFieldValue('perhatian', [])
-                            kartuKuningFormik.handleSubmit()
-                          }} okText="Iya, Pasien Gagal" cancelText="Tidak Jadi">
-                            <Button danger>GAGAL</Button>
-                          </Popconfirm>
-                        </Space>
+                        <Access accessible={access.canSeeKartuKuning}>
+                          <Space direction='vertical'>
+                            <Button type='primary' onClick={() => setIsLolosKKModalOpen(true)}>LOLOS</Button>
+                            <Button onClick={() => setIsPendingKKModalOpen(true)}>PENDING</Button>
+                            <Popconfirm title="Apakah yakin untuk GAGALIN pasien?" onConfirm={() => {
+                              kartuKuningFormik.setFieldValue('status', 'GAGAL')
+                              kartuKuningFormik.setFieldValue('tanggal', null)
+                              kartuKuningFormik.setFieldValue('jam', null)
+                              kartuKuningFormik.setFieldValue('perhatian', [])
+                              kartuKuningFormik.handleSubmit()
+                            }} okText="Iya, Pasien Gagal" cancelText="Tidak Jadi">
+                              <Button danger>GAGAL</Button>
+                            </Popconfirm>
+                          </Space>
+                        </Access>
                         :
                         <Text>Belum hadir Kartu Kuning</Text>
                   }
@@ -628,6 +684,26 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
               {
                 pasien.penyakit === "KATARAK" ? <Text italic>Mohon pastikan apakah ada perubahan penyakit pasien dari Katarak ke Pterygium</Text> : <></>
               }
+            </Form.Item>
+          </Space>
+        </Form>
+      </Modal>
+      <Modal
+        title="Hasil Lab"
+        open={isHasilLabModalOpen}
+        onOk={() => radiologiFormik.handleSubmit()}
+        onCancel={() => setIsHasilLabModalOpen(false)}
+        okText="Simpan"
+        cancelText="Batal"
+      >
+        <Form>
+          <Space direction='vertical'>
+            <Radio.Group name='tipe_hasil_rontgen' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.tipe_hasil_rontgen}>
+              <Radio value="USB">USB</Radio>
+              <Radio value="PRINT">PRINT</Radio>
+            </Radio.Group>
+            <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
+              <Input name='nomor_kertas_penyerahan' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.nomor_kertas_penyerahan} />
             </Form.Item>
           </Space>
         </Form>

@@ -28,6 +28,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import { ParseResponseError } from '@/utils/requests';
 import _ from 'lodash'
 import Paragraph from 'antd/lib/typography/Paragraph';
+import { Access } from '@umijs/max';
+import { useAccess } from '@umijs/max';
 const { TextArea } = Input;
 
 interface PasienFormProps {
@@ -44,6 +46,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
   const [editState, setEditState] = useState<boolean>(false)
   const [tipeIdentitases, setTipeIdentitases] = useState<TipeIdentitas[]>(TYPE_IDENTITAS)
   const inputRef = useRef<InputRef>(null);
+  const access = useAccess()
 
   useMemo(() => {
     queryPuskesmas().then(data => setPuskesmases(data));
@@ -308,7 +311,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="pendamping_cb" label=" " style={{ marginBottom: 0 }}>
-                <Checkbox onChange={e => {
+                <Checkbox disabled={IsDetailView && editState == false} onChange={e => {
                   if (e.target.checked) {
                     props.setFieldValue('nama_pendamping', props.values.nama_keluarga)
                     props.setFieldValue('nomor_telepon_pendamping', props.values.nomor_telepon_keluarga)
@@ -329,21 +332,25 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             {
               IsDetailView ?
                 <Col span={12}>
-                  <Form.Item label=" " name="edit">
-                    <Space>
-                      <Button onClick={() => setEditState(!editState)}>{editState ? "Batal Edit" : "Edit"}</Button>
-                      {
-                        editState &&
-                        <SubmitButton type='primary'>Simpan</SubmitButton>
-                      }
-                    </Space>
-                  </Form.Item>
+                  <Access accessible={access.canSeePendaftaran}>
+                    <Form.Item label=" " name="edit">
+                      <Space>
+                        <Button onClick={() => setEditState(!editState)}>{editState ? "Batal Edit" : "Edit"}</Button>
+                        {
+                          editState &&
+                          <SubmitButton type='primary'>Simpan</SubmitButton>
+                        }
+                      </Space>
+                    </Form.Item>
+                  </Access>
                 </Col>
                 :
                 <Col span={12}>
-                  <Form.Item label=" " name="submit">
-                    <SubmitButton type='primary'>Register</SubmitButton>
-                  </Form.Item>
+                  <Access accessible={access.canSeePendaftaran}>
+                    <Form.Item label=" " name="submit">
+                      <SubmitButton type='primary'>Register</SubmitButton>
+                    </Form.Item>
+                  </Access>
                 </Col>
             }
           </Row>

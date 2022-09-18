@@ -1,20 +1,19 @@
 import { history } from 'umi';
-import { GetCurrentUserToken, LogoutUser } from './services/baksos/UserController';
+import { GetCurrentUserToken, getPermission, LogoutUser } from './services/baksos/UserController';
 
-export async function getInitialState(): Promise<{ name: string }> {
+export async function getInitialState(): Promise<{ name: string, userPermission?: UserPermissionType }> {
   if (history.location.pathname !== '/login') {
     try {
       const currentUser = GetCurrentUserToken();
       if (!currentUser)
         throw "";
-      return {
-        name: currentUser
-      };
+      const userPermission = await getPermission()
+      return { name: userPermission.user.username, userPermission: userPermission };
     } catch (error) {
       history.push('/login');
     }
   }
-  return { name: '@jing/max' };
+  return { name: "", userPermission: undefined }
 }
 
 export const layout = () => {

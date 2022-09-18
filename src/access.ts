@@ -1,10 +1,23 @@
-export default (initialState: API.UserInfo) => {
-  // 在这里按照初始化数据定义项目中的权限，统一管理
-  // 参考文档 https://next.umijs.org/docs/max/access
-  const canSeeAdmin = !!(
-    initialState && initialState.name !== 'dontHaveAccess'
-  );
+export default (initialState: any) => {
+  const { userPermission } = initialState
+  const user = userPermission.user as UserType;
+  const permission = userPermission.permissions as string[];
+
+  const canSeeAdmin = user.is_staff || user.is_superuser;
+  const canSeePendaftaran = true // permission.includes('')
+  const canSeePemeriksaan = true // permission.includes('')
+  const canSeeLab = true // permission.includes('')
+  const canSeeEkg = true // permission.includes('')
+  const canSeeRontgen = true // permission.includes('')
+  const canSeeKartuKuning = true // permission.includes('')
+
   return {
-    canSeeAdmin,
+    canSeeAdmin: canSeeAdmin,
+    canSeePendaftaran: canSeePendaftaran || canSeeAdmin,
+    canSeePemeriksaan: canSeePemeriksaan || canSeeAdmin,
+    canSeeLab: canSeeLab || canSeeAdmin,
+    canSeeEkg: canSeeEkg || canSeeAdmin,
+    canSeeRontgen: canSeeRontgen || canSeeAdmin,
+    canSeeKartuKuning: canSeeKartuKuning || canSeeAdmin
   };
 };
