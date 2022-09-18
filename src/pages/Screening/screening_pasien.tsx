@@ -369,212 +369,222 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
             </Space>
           </Form>
         </ProCard>
-        <Card title="Screening Pasien">
-          <Card.Grid style={screeningPasienCard}>
-            <Title level={5}>Tensi <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_tensi} /></Title>
-            {
-              pasien.perlu_rescreen && moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day")
-                ?
-                <Text>Pasien Akan Recreening Besok</Text>
-                :
-                pasienScreening?.telah_lewat_cek_tensi != null ?
-                  <Space direction='vertical'>
-                    <Text>{pasienScreening.telah_lewat_cek_tensi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_tensi).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                    <Button type='link' danger size='small' onClick={cancelTensi}>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
-                  </Space>
-                  :
-                  <Space direction='vertical'>
-                    <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirTensi(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
-                      <Button danger>BATAL</Button>
-                    </Popconfirm>
+        {
+          pasien.nomor_antrian ?
+            pasien.perlu_rescreen && !moment(pasien.tanggal_nomor_antrian).isSame(moment(), 'day') ?
+              <Card>Pasien Belum Absen</Card>
+              :
+              <>
+                <Card title="Screening Pasien">
+                  <Card.Grid style={screeningPasienCard}>
+                    <Title level={5}>Tensi <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_tensi} /></Title>
                     {
-                      pasien.perlu_rescreen ||
-                      <Popconfirm title="Apakah yakin untuk PENDING TENSI pasien?" onConfirm={pendingTensi} okText="Iya" cancelText="Tidak Jadi">
-                        <Button danger>PENDING</Button>
-                      </Popconfirm>
+                      pasien.perlu_rescreen && moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day")
+                        ?
+                        <Text>Pasien Akan Recreening Besok</Text>
+                        :
+                        pasienScreening?.telah_lewat_cek_tensi != null ?
+                          <Space direction='vertical'>
+                            <Text>{pasienScreening.telah_lewat_cek_tensi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_tensi).format('YYYY-MM-DD HH:mm:ss')}</Text>
+                            <Button type='link' danger size='small' onClick={cancelTensi}>Cancel {pasienScreening.telah_lewat_cek_tensi ? 'Kehadiran' : 'Batal'} </Button>
+                          </Space>
+                          :
+                          <Space direction='vertical'>
+                            <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirTensi(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
+                              <Button danger>BATAL</Button>
+                            </Popconfirm>
+                            {
+                              pasien.perlu_rescreen ||
+                              <Popconfirm title="Apakah yakin untuk PENDING TENSI pasien?" onConfirm={pendingTensi} okText="Iya" cancelText="Tidak Jadi">
+                                <Button danger>PENDING</Button>
+                              </Popconfirm>
+                            }
+                          </Space>
                     }
-                  </Space>
-            }
-          </Card.Grid>
-          <Card.Grid style={screeningPasienCard}>
-            <Title level={5}>Cek Fisik/Mata <ProgressIcon isPass={pasienScreening?.telah_lewat_pemeriksaan} /></Title>
-            {
-              pasienScreening?.telah_lewat_pemeriksaan != null ?
-                <Space direction='vertical'>
-                  <Text>{pasienScreening.telah_lewat_pemeriksaan ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_pemeriksaan).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                  <Button type='link' danger size='small' onClick={cancelPemeriksaan}>Cancel {pasienScreening.telah_lewat_pemeriksaan ? 'Kehadiran' : 'Batal'} </Button>
-                </Space>
-                :
-                <Space direction='vertical'>
-                  <Button type='primary' onClick={() => capHadirPemeriksaan(true)}>HADIR</Button>
-                  <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirPemeriksaan(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
-                    <Button danger>BATAL</Button>
-                  </Popconfirm>
-                </Space>
-            }
-          </Card.Grid>
-          <Card.Grid style={screeningPasienCard}>
-            <Title level={5}>LAB <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_lab} /></Title>
-            {
-              pasienScreening?.telah_lewat_cek_lab != null ?
-                <Space direction='vertical'>
-                  <Text>{pasienScreening.telah_lewat_cek_lab ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_lab).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                  <Button type='link' danger size='small' onClick={cancelLab}>Cancel {pasienScreening.telah_lewat_cek_lab ? 'Kehadiran' : 'Batal'} </Button>
-                </Space>
-                :
-                <Space direction='vertical'>
-                  <Button type='primary' onClick={() => setIsLabModalOpen(true)}>HADIR</Button>
-                </Space>
-            }
-          </Card.Grid>
-          <Card.Grid style={screeningPasienCard}>
-            <Title level={5}>RADIOLOGY <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_radiologi} /></Title>
-            {
-              pasienScreening?.telah_lewat_cek_radiologi != null ?
-                <Space direction='vertical'>
-                  <Text>{pasienScreening.telah_lewat_cek_radiologi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_radiologi).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                  <Button type='link' danger size='small' onClick={cancelRadiologi}>Cancel {pasienScreening.telah_lewat_cek_radiologi ? 'Kehadiran' : 'Batal'} </Button>
-                </Space>
-                :
-                <Space direction='vertical'>
-                  <Button type='primary' disabled={!pasien.perlu_radiologi} onClick={() => capHadirRadiologi(true)}>HADIR</Button>
-                </Space>
-            }
-          </Card.Grid>
-          <Card.Grid style={screeningPasienCard}>
-            <Title level={5}>EKG <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_ekg} /></Title>
-            {
-              pasienScreening?.telah_lewat_cek_ekg != null ?
-                <Space direction='vertical'>
-                  <Text>{pasienScreening.telah_lewat_cek_ekg ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_ekg).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                  <Button type='link' danger size='small' onClick={cancelEkg}>Cancel {pasienScreening.telah_lewat_cek_ekg ? 'Kehadiran' : 'Batal'} </Button>
-                </Space>
-                :
-                <Space direction='vertical'>
-                  <Button type='primary' disabled={!pasien.perlu_ekg} onClick={() => capHadirEkg(true)}>HADIR</Button>
-                </Space>
-            }
-          </Card.Grid>
-          <Card.Grid style={screeningPasienCard}>
-            <Title level={5}>Kartu Kuning <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_kartu_kuning} /></Title>
-            {
-              pasienScreening?.telah_lewat_cek_kartu_kuning != null ?
-                <Space direction='vertical'>
-                  <Text>{pasienScreening.telah_lewat_cek_kartu_kuning ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_kartu_kuning).format('YYYY-MM-DD HH:mm:ss')}</Text>
-                  <Button type='link' danger size='small' onClick={cancelKartuKuning}>Cancel {pasienScreening.telah_lewat_cek_kartu_kuning ? 'Kehadiran' : 'Batal'} </Button>
-                </Space>
-                :
-                <Space direction='vertical'>
-                  <Button type='primary' onClick={() => capHadirKartuKuning(true)}>HADIR</Button>
-                </Space>
-            }
-          </Card.Grid>
-        </Card>
-        <ProCard title="LAB" layout="default" bordered>
-          {
-            pasienScreening.telah_lewat_cek_lab != null ?
-              <Space>
-                <Checkbox disabled checked={pasien.perlu_radiologi}>RADIOLOGY</Checkbox>
-                <Checkbox disabled checked={pasien.perlu_ekg}>EKG</Checkbox>
-                <Button type='primary' onClick={() => setIsLabModalOpen(true)}>Edit</Button>
-              </Space>
-              :
-              <Text>Belum hadir LAB</Text>
-          }
-        </ProCard>
-        <ProCard title="RADIOLOGY" layout="default" bordered>
-          {
-            pasienScreening.telah_lewat_cek_radiologi != null ?
-              <Form>
-                <Space direction='vertical'>
-                  <Radio.Group value={pasienScreening.tipe_hasil_rontgen} disabled>
-                    <Radio value="USB">USB</Radio>
-                    <Radio value="PRINT">PRINT</Radio>
-                  </Radio.Group>
-                  <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
-                    <Input name='nomor_kertas_penyerahan' disabled value={pasienScreening.nomor_kertas_penyerahan} />
-                  </Form.Item>
-                  <Button type='primary' onClick={() => setIsRadiologiModalOpen(true)}>Edit</Button>
-                </Space>
-              </Form>
-              :
-              <Text>Belum hadir Radiologi</Text>
-          }
-        </ProCard>
-        <ProCard title="Kartu Kuning" layout="default" bordered>
-          {
-            kartuKuning != null && kartuKuning.nomor != null ?
-              <Form>
-                {
-                  kartuKuning.status == "LOLOS" ?
-                    <>
-                      <FormItemDisplay label='Nomor Kartu Kuning' value={kartuKuning.nomor} />
-                      <FormItemDisplay label='Status' value={kartuKuning.status} />
-                      <FormItemDisplay label='Tanggal Operasi' value={kartuKuning.tanggal_operasi} />
-                      <FormItemDisplay label='Jam Operasi' value={kartuKuning.jam_operasi} />
-                      <FormItemDisplay label='Perhatian' value={kartuKuning.perhatian?.join(" | ")} />
-                    </>
-                    :
-                    kartuKuning.status == "PENDING" ?
+                  </Card.Grid>
+                  <Card.Grid style={screeningPasienCard}>
+                    <Title level={5}>Cek Fisik/Mata <ProgressIcon isPass={pasienScreening?.telah_lewat_pemeriksaan} /></Title>
+                    {
+                      pasienScreening?.telah_lewat_pemeriksaan != null ?
+                        <Space direction='vertical'>
+                          <Text>{pasienScreening.telah_lewat_pemeriksaan ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_pemeriksaan).format('YYYY-MM-DD HH:mm:ss')}</Text>
+                          <Button type='link' danger size='small' onClick={cancelPemeriksaan}>Cancel {pasienScreening.telah_lewat_pemeriksaan ? 'Kehadiran' : 'Batal'} </Button>
+                        </Space>
+                        :
+                        <Space direction='vertical'>
+                          <Button type='primary' onClick={() => capHadirPemeriksaan(true)}>HADIR</Button>
+                          <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirPemeriksaan(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
+                            <Button danger>BATAL</Button>
+                          </Popconfirm>
+                        </Space>
+                    }
+                  </Card.Grid>
+                  <Card.Grid style={screeningPasienCard}>
+                    <Title level={5}>LAB <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_lab} /></Title>
+                    {
+                      pasienScreening?.telah_lewat_cek_lab != null ?
+                        <Space direction='vertical'>
+                          <Text>{pasienScreening.telah_lewat_cek_lab ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_lab).format('YYYY-MM-DD HH:mm:ss')}</Text>
+                          <Button type='link' danger size='small' onClick={cancelLab}>Cancel {pasienScreening.telah_lewat_cek_lab ? 'Kehadiran' : 'Batal'} </Button>
+                        </Space>
+                        :
+                        <Space direction='vertical'>
+                          <Button type='primary' onClick={() => setIsLabModalOpen(true)}>HADIR</Button>
+                        </Space>
+                    }
+                  </Card.Grid>
+                  <Card.Grid style={screeningPasienCard}>
+                    <Title level={5}>RADIOLOGY <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_radiologi} /></Title>
+                    {
+                      pasienScreening?.telah_lewat_cek_radiologi != null ?
+                        <Space direction='vertical'>
+                          <Text>{pasienScreening.telah_lewat_cek_radiologi ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_radiologi).format('YYYY-MM-DD HH:mm:ss')}</Text>
+                          <Button type='link' danger size='small' onClick={cancelRadiologi}>Cancel {pasienScreening.telah_lewat_cek_radiologi ? 'Kehadiran' : 'Batal'} </Button>
+                        </Space>
+                        :
+                        <Space direction='vertical'>
+                          <Button type='primary' disabled={!pasien.perlu_radiologi} onClick={() => capHadirRadiologi(true)}>HADIR</Button>
+                        </Space>
+                    }
+                  </Card.Grid>
+                  <Card.Grid style={screeningPasienCard}>
+                    <Title level={5}>EKG <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_ekg} /></Title>
+                    {
+                      pasienScreening?.telah_lewat_cek_ekg != null ?
+                        <Space direction='vertical'>
+                          <Text>{pasienScreening.telah_lewat_cek_ekg ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_ekg).format('YYYY-MM-DD HH:mm:ss')}</Text>
+                          <Button type='link' danger size='small' onClick={cancelEkg}>Cancel {pasienScreening.telah_lewat_cek_ekg ? 'Kehadiran' : 'Batal'} </Button>
+                        </Space>
+                        :
+                        <Space direction='vertical'>
+                          <Button type='primary' disabled={!pasien.perlu_ekg} onClick={() => capHadirEkg(true)}>HADIR</Button>
+                        </Space>
+                    }
+                  </Card.Grid>
+                  <Card.Grid style={screeningPasienCard}>
+                    <Title level={5}>Kartu Kuning <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_kartu_kuning} /></Title>
+                    {
+                      pasienScreening?.telah_lewat_cek_kartu_kuning != null ?
+                        <Space direction='vertical'>
+                          <Text>{pasienScreening.telah_lewat_cek_kartu_kuning ? 'Hadir' : "Batal"} pada: {moment(pasienScreening.jam_cek_kartu_kuning).format('YYYY-MM-DD HH:mm:ss')}</Text>
+                          <Button type='link' danger size='small' onClick={cancelKartuKuning}>Cancel {pasienScreening.telah_lewat_cek_kartu_kuning ? 'Kehadiran' : 'Batal'} </Button>
+                        </Space>
+                        :
+                        <Space direction='vertical'>
+                          <Button type='primary' onClick={() => capHadirKartuKuning(true)}>HADIR</Button>
+                        </Space>
+                    }
+                  </Card.Grid>
+                </Card>
+                <ProCard title="LAB" layout="default" bordered>
+                  {
+                    pasienScreening.telah_lewat_cek_lab != null ?
+                      <Space>
+                        <Checkbox disabled checked={pasien.perlu_radiologi}>RADIOLOGY</Checkbox>
+                        <Checkbox disabled checked={pasien.perlu_ekg}>EKG</Checkbox>
+                        <Button type='primary' onClick={() => setIsLabModalOpen(true)}>Edit</Button>
+                      </Space>
+                      :
+                      <Text>Belum hadir LAB</Text>
+                  }
+                </ProCard>
+                <ProCard title="RADIOLOGY" layout="default" bordered>
+                  {
+                    pasienScreening.telah_lewat_cek_radiologi != null ?
                       <Form>
-                        <FormItemDisplay label='Nomor Kartu Kuning' value={kartuKuning.nomor} />
-                        <FormItemDisplay label='Status' value={kartuKuning.status} />
-                        <FormItemDisplay label='Perhatian' value={kartuKuning.perhatian?.join(" | ")} />
+                        <Space direction='vertical'>
+                          <Radio.Group value={pasienScreening.tipe_hasil_rontgen} disabled>
+                            <Radio value="USB">USB</Radio>
+                            <Radio value="PRINT">PRINT</Radio>
+                          </Radio.Group>
+                          <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
+                            <Input name='nomor_kertas_penyerahan' disabled value={pasienScreening.nomor_kertas_penyerahan} />
+                          </Form.Item>
+                          <Button type='primary' onClick={() => setIsRadiologiModalOpen(true)}>Edit</Button>
+                        </Space>
                       </Form>
                       :
+                      <Text>Belum hadir Radiologi</Text>
+                  }
+                </ProCard>
+                <ProCard title="Kartu Kuning" layout="default" bordered>
+                  {
+                    kartuKuning != null && kartuKuning.nomor != null ?
                       <Form>
-                        <FormItemDisplay label='Status' value={kartuKuning.status} />
+                        {
+                          kartuKuning.status == "LOLOS" ?
+                            <>
+                              <FormItemDisplay label='Nomor Kartu Kuning' value={kartuKuning.nomor} />
+                              <FormItemDisplay label='Status' value={kartuKuning.status} />
+                              <FormItemDisplay label='Tanggal Operasi' value={kartuKuning.tanggal_operasi} />
+                              <FormItemDisplay label='Jam Operasi' value={kartuKuning.jam_operasi} />
+                              <FormItemDisplay label='Perhatian' value={kartuKuning.perhatian?.join(" | ")} />
+                            </>
+                            :
+                            kartuKuning.status == "PENDING" ?
+                              <Form>
+                                <FormItemDisplay label='Nomor Kartu Kuning' value={kartuKuning.nomor} />
+                                <FormItemDisplay label='Status' value={kartuKuning.status} />
+                                <FormItemDisplay label='Perhatian' value={kartuKuning.perhatian?.join(" | ")} />
+                              </Form>
+                              :
+                              <Form>
+                                <FormItemDisplay label='Status' value={kartuKuning.status} />
+                              </Form>
+                        }
+                        {
+                          kartuKuning.status == "LOLOS" ?
+                            <>
+                              <Form.Item style={{ marginBottom: "10px" }}>
+                                <ReactToPrint
+                                  trigger={() => <Button type='primary' >PRINT KARTU KUNING</Button>}
+                                  content={() => kartuKuningRef.current}
+                                />
+                              </Form.Item>
+                              <Form.Item style={{ marginBottom: "10px" }}>
+                                <ReactToPrint
+                                  trigger={() => <Button>PRINT INFO CONSENT</Button>}
+                                  content={() => printInfoConsentRef.current}
+                                />
+                              </Form.Item>
+                            </>
+                            :
+                            kartuKuning.status == "PENDING" ?
+                              <Form.Item style={{ marginBottom: "10px" }}>
+                                <ReactToPrint
+                                  trigger={() => <Button type='primary' >PRINT KARTU PENDING</Button>}
+                                  content={() => kartuPendingRef.current}
+                                />
+                              </Form.Item>
+                              : <></>
+                        }
+                        <Form.Item>
+                          <Button type='link' danger size='small' onClick={cancelHasilKartuKuning}>Cancel Hasil Kartu Kuning</Button>
+                        </Form.Item>
                       </Form>
-                }
-                {
-                  kartuKuning.status == "LOLOS" ?
-                    <>
-                      <Form.Item style={{ marginBottom: "10px" }}>
-                        <ReactToPrint
-                          trigger={() => <Button type='primary' >PRINT KARTU KUNING</Button>}
-                          content={() => kartuKuningRef.current}
-                        />
-                      </Form.Item>
-                      <Form.Item style={{ marginBottom: "10px" }}>
-                        <ReactToPrint
-                          trigger={() => <Button>PRINT INFO CONSENT</Button>}
-                          content={() => printInfoConsentRef.current}
-                        />
-                      </Form.Item>
-                    </>
-                    :
-                    kartuKuning.status == "PENDING" ?
-                      <Form.Item style={{ marginBottom: "10px" }}>
-                        <ReactToPrint
-                          trigger={() => <Button type='primary' >PRINT KARTU PENDING</Button>}
-                          content={() => kartuPendingRef.current}
-                        />
-                      </Form.Item>
-                      : <></>
-                }
-                <Form.Item>
-                  <Button type='link' danger size='small' onClick={cancelHasilKartuKuning}>Cancel Hasil Kartu Kuning</Button>
-                </Form.Item>
-              </Form>
-              :
-              pasienScreening.telah_lewat_cek_kartu_kuning != null ?
-                <Space direction='vertical'>
-                  <Button type='primary' onClick={() => setIsLolosKKModalOpen(true)}>LOLOS</Button>
-                  <Button onClick={() => setIsPendingKKModalOpen(true)}>PENDING</Button>
-                  <Popconfirm title="Apakah yakin untuk GAGALIN pasien?" onConfirm={() => {
-                    kartuKuningFormik.setFieldValue('status', 'GAGAL')
-                    kartuKuningFormik.setFieldValue('tanggal', null)
-                    kartuKuningFormik.setFieldValue('jam', null)
-                    kartuKuningFormik.setFieldValue('perhatian', [])
-                    kartuKuningFormik.handleSubmit()
-                  }} okText="Iya, Pasien Gagal" cancelText="Tidak Jadi">
-                    <Button danger>GAGAL</Button>
-                  </Popconfirm>
-                </Space>
-                :
-                <Text>Belum hadir Kartu Kuning</Text>
-          }
-        </ProCard>
+                      :
+                      pasienScreening.telah_lewat_cek_kartu_kuning != null ?
+                        <Space direction='vertical'>
+                          <Button type='primary' onClick={() => setIsLolosKKModalOpen(true)}>LOLOS</Button>
+                          <Button onClick={() => setIsPendingKKModalOpen(true)}>PENDING</Button>
+                          <Popconfirm title="Apakah yakin untuk GAGALIN pasien?" onConfirm={() => {
+                            kartuKuningFormik.setFieldValue('status', 'GAGAL')
+                            kartuKuningFormik.setFieldValue('tanggal', null)
+                            kartuKuningFormik.setFieldValue('jam', null)
+                            kartuKuningFormik.setFieldValue('perhatian', [])
+                            kartuKuningFormik.handleSubmit()
+                          }} okText="Iya, Pasien Gagal" cancelText="Tidak Jadi">
+                            <Button danger>GAGAL</Button>
+                          </Popconfirm>
+                        </Space>
+                        :
+                        <Text>Belum hadir Kartu Kuning</Text>
+                  }
+                </ProCard>
+              </>
+            :
+            <Card>Pasien Belum Absen</Card>
+        }
       </Space>
       <Modal
         title="Kehadiran Lab"
@@ -711,7 +721,6 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
           </Form.Item>
         </Form>
       </Modal>
-
       {
         kartuKuning &&
           kartuKuning.status == "LOLOS" ?

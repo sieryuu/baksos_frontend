@@ -5,7 +5,7 @@ import {
   DatePicker,
   SubmitButton,
 } from 'formik-antd';
-import { Input as AntdInput } from 'antd'
+import { Checkbox, Input as AntdInput } from 'antd'
 import {
   Col,
   Row,
@@ -307,11 +307,21 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
               </Form.Item>
             </Col>
             <Col span={12}>
+              <Form.Item name="pendamping_cb" label=" " style={{ marginBottom: 0 }}>
+                <Checkbox onChange={e => {
+                  if (e.target.checked) {
+                    props.setFieldValue('nama_pendamping', props.values.nama_keluarga)
+                    props.setFieldValue('nomor_telepon_pendamping', props.values.nomor_telepon_keluarga)
+                  }
+                }}>Samakan data pendamping dengan keluarga yang bisa dihubungi</Checkbox>
+              </Form.Item>
               <Form.Item name="nama_pendamping" label="Nama Pendamping">
                 <Input name="nama_pendamping" disabled={IsDetailView && editState == false} />
               </Form.Item>
             </Col>
             <Col span={12}>
+              <Form.Item name="pendamping_cb_2" label=" " style={{ marginBottom: 0 }}>
+              </Form.Item>
               <Form.Item name="nomor_telepon_pendamping" label="No. Telp Pendamping">
                 <Input name="nomor_telepon_pendamping" disabled={IsDetailView && editState == false} />
               </Form.Item>

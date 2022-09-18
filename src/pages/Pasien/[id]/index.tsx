@@ -112,7 +112,7 @@ const PasienDetailPage: React.FC = () => {
                         <>
                           <Form.Item name="print">
                             <ReactToPrint
-                              trigger={() => <Button type='primary'>PRINT FORM STATUS PASIEN SCREENING</Button>}
+                              trigger={() => <Button type='primary'>PRINT FORM STATUS SCREENING PASIEN</Button>}
                               content={() => printRef.current}
                             />
                           </Form.Item>
