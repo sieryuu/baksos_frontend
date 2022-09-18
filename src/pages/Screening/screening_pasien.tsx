@@ -3,7 +3,7 @@ import { CancelEkg, CancelKK, CancelLab, CancelPemeriksaan, CancelRadiologi, Can
 import { ParseResponseError } from '@/utils/requests';
 import { CheckCircleTwoTone, ClockCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
 import { ProCard } from '@ant-design/pro-components';
-import { Radio, Input, Space, Card, Typography, Button, Checkbox, DatePicker, notification, Modal, Form, Select, TimePicker } from 'antd';
+import { Radio, Input, Space, Card, Typography, Button, Checkbox, DatePicker, notification, Modal, Form, Select, TimePicker, Popconfirm } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import { useFormik } from 'formik';
 import moment from 'moment';
@@ -84,7 +84,6 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   const [isRadiologiModalOpen, setIsRadiologiModalOpen] = useState(false)
   const [isLolosKKModalOpen, setIsLolosKKModalOpen] = useState(false)
   const [isPendingKKModalOpen, setIsPendingKKModalOpen] = useState(false)
-  const [isBatalKKModalOpen, setIsBatalKKModalOpen] = useState(false)
 
   const retrievePasienKartuKuning = () => {
     if (pasien.id) {
@@ -329,7 +328,6 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
           retrievePasien()
           retrievePasienKartuKuning()
           setIsLolosKKModalOpen(false)
-          setIsBatalKKModalOpen(false)
           setIsPendingKKModalOpen(false)
         }).catch(err => {
           notification["warning"]({ message: `Update Hasil Kartu Kuning Gagal`, description: ParseResponseError(err) });
@@ -386,10 +384,14 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                   </Space>
                   :
                   <Space direction='vertical'>
-                    <Button danger onClick={() => capHadirTensi(false)}>BATAL</Button>
+                    <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirTensi(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
+                      <Button danger>BATAL</Button>
+                    </Popconfirm>
                     {
                       pasien.perlu_rescreen ||
-                      <Button danger onClick={pendingTensi}>PENDING</Button>
+                      <Popconfirm title="Apakah yakin untuk PENDING TENSI pasien?" onConfirm={pendingTensi} okText="Iya" cancelText="Tidak Jadi">
+                        <Button danger>PENDING</Button>
+                      </Popconfirm>
                     }
                   </Space>
             }
@@ -405,7 +407,9 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                 :
                 <Space direction='vertical'>
                   <Button type='primary' onClick={() => capHadirPemeriksaan(true)}>HADIR</Button>
-                  <Button danger onClick={() => capHadirPemeriksaan(false)}>BATAL</Button>
+                  <Popconfirm title="Apakah yakin untuk BATALIN pasien?" onConfirm={() => capHadirPemeriksaan(false)} okText="Iya, Pasien Batal" cancelText="Tidak Jadi">
+                    <Button danger>BATAL</Button>
+                  </Popconfirm>
                 </Space>
             }
           </Card.Grid>
@@ -557,7 +561,15 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                 <Space direction='vertical'>
                   <Button type='primary' onClick={() => setIsLolosKKModalOpen(true)}>LOLOS</Button>
                   <Button onClick={() => setIsPendingKKModalOpen(true)}>PENDING</Button>
-                  <Button danger>GAGAL</Button>
+                  <Popconfirm title="Apakah yakin untuk GAGALIN pasien?" onConfirm={() => {
+                    kartuKuningFormik.setFieldValue('status', 'GAGAL')
+                    kartuKuningFormik.setFieldValue('tanggal', null)
+                    kartuKuningFormik.setFieldValue('jam', null)
+                    kartuKuningFormik.setFieldValue('perhatian', [])
+                    kartuKuningFormik.handleSubmit()
+                  }} okText="Iya, Pasien Gagal" cancelText="Tidak Jadi">
+                    <Button danger>GAGAL</Button>
+                  </Popconfirm>
                 </Space>
                 :
                 <Text>Belum hadir Kartu Kuning</Text>
