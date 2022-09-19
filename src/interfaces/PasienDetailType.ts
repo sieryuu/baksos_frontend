@@ -1,4 +1,5 @@
 interface DetailPasienType {
+    id: number;
     pasien: number;
 
     tensi: string;

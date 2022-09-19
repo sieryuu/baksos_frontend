@@ -3,7 +3,7 @@ import { CancelEkg, CancelKK, CancelLab, CancelPemeriksaan, CancelRadiologi, Can
 import { ParseResponseError } from '@/utils/requests';
 import { CheckCircleTwoTone, ClockCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
 import { ProCard } from '@ant-design/pro-components';
-import { Radio, Input, Space, Card, Typography, Button, Checkbox, DatePicker, notification, Modal, Form, Select, TimePicker, Popconfirm } from 'antd';
+import { Radio, Input, Space, Card, Typography, Button, Checkbox, DatePicker, notification, Modal, Form, Select, TimePicker, Popconfirm, Divider, Row, Col } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import { useFormik } from 'formik';
 import moment from 'moment';
@@ -15,7 +15,7 @@ import KartuKuningTemplate from '@/print_template/KartuKuningTemplate';
 import ReactToPrint from 'react-to-print';
 import KartuPendingTemplate from '@/print_template/KartuPendingTemplate';
 import InfoConsentTemplate from '@/print_template/InfoConsentTemplate';
-import { queryPasienDetail } from '@/services/baksos/PasienDetailController';
+import { queryPasienDetail, updatePasienDetail, createPasienDetail } from '@/services/baksos/PasienDetailController';
 import { Access, useAccess } from '@umijs/max';
 
 const { TextArea } = Input;
@@ -222,6 +222,56 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       }
     },
   });
+
+  const hasilLabFormik = useFormik<DetailPasienType>({
+    enableReinitialize: true,
+    initialValues: {
+      id: 0,
+      pasien: 0,
+      tensi: detailPasien?.tensi || "",
+      HB: detailPasien?.HB || "",
+      LEUCO: detailPasien?.LEUCO || "",
+      BT: detailPasien?.BT || "",
+      GDS: detailPasien?.GDS || "",
+      ERY: detailPasien?.ERY || "",
+      CT: detailPasien?.CT || "",
+      golongan_darah: detailPasien?.golongan_darah || "",
+      HBSAG: detailPasien?.HBSAG || "",
+      HT: detailPasien?.HT || "",
+      THROMBO: detailPasien?.THROMBO || "",
+      HIV: detailPasien?.HIV || "",
+    },
+    onSubmit: values => {
+      if (pasien.id) {
+        values.pasien = pasien.id
+        if (detailPasien) {
+          // update
+          updatePasienDetail(detailPasien.id, values)
+            .then(data => {
+              notification["success"]({ message: `Update Hasil Lab Berhasil`, description: "" });
+              retrievePasien()
+              retrieveDetailPasien()
+            }).catch(err => {
+              notification["warning"]({ message: `Update Hasil Lab Gagal`, description: ParseResponseError(err) });
+            }).finally(() => {
+              setIsHasilLabModalOpen(false)
+            })
+        } else {
+          // create
+          createPasienDetail(values)
+            .then(data => {
+              notification["success"]({ message: `Create Hasil Lab Berhasil`, description: "" });
+              retrievePasien()
+              retrieveDetailPasien()
+            }).catch(err => {
+              notification["warning"]({ message: `Create Hasil Lab Gagal`, description: ParseResponseError(err) });
+            }).finally(() => {
+              setIsHasilLabModalOpen(false)
+            })
+        }
+      }
+    }
+  })
 
   const cancelLab = () => {
     CancelLab(pasienScreening.id)
@@ -525,12 +575,77 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                 <ProCard title="LAB" layout="default" bordered>
                   {
                     pasienScreening.telah_lewat_cek_lab != null ?
-                      <Space>
+                      <Space direction='vertical'>
                         <Checkbox disabled checked={pasien.perlu_radiologi}>RADIOLOGY</Checkbox>
                         <Checkbox disabled checked={pasien.perlu_ekg}>EKG</Checkbox>
                         <Access accessible={access.canSeeLab || access.canSeeKartuKuning}>
                           <Button type='primary' onClick={() => setIsLabModalOpen(true)}>Edit</Button>
                         </Access>
+                      </Space>
+                      :
+                      <Text>Belum hadir LAB</Text>
+                  }
+                </ProCard>
+                <ProCard title="Hasil LAB" layout="default" bordered>
+                  {
+                    pasienScreening.telah_lewat_cek_lab != null ?
+                      <Space>
+                        <Form
+                          labelCol={{ span: 12 }}
+                          wrapperCol={{ span: 80 }}
+                          layout="horizontal">
+                          <Row>
+                            <Col span={6}>
+                              <Form.Item label="Tensi">
+                                <Input name='tensi' disabled value={detailPasien?.tensi} />
+                              </Form.Item>
+                              <Form.Item label="HB">
+                                <Input name='HB' disabled value={detailPasien?.HB} />
+                              </Form.Item>
+                              <Form.Item label="LEUCO">
+                                <Input name='LEUCO' disabled value={detailPasien?.LEUCO} />
+                              </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                              <Form.Item label="BT">
+                                <Input name='BT' disabled value={detailPasien?.BT} />
+                              </Form.Item>
+                              <Form.Item label="GDS">
+                                <Input name='GDS' disabled value={detailPasien?.GDS} />
+                              </Form.Item>
+                              <Form.Item label="ERY">
+                                <Input name='ERY' disabled value={detailPasien?.ERY} />
+                              </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                              <Form.Item label="CT">
+                                <Input name='CT' disabled value={detailPasien?.CT} />
+                              </Form.Item>
+                              <Form.Item label="Golongan Darah">
+                                <Input name='golongan_darah' disabled value={detailPasien?.golongan_darah} />
+                              </Form.Item>
+                              <Form.Item label="HBSAG">
+                                <Input name='HBSAG' disabled value={detailPasien?.HBSAG} />
+                              </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                              <Form.Item label="HT">
+                                <Input name='HT' disabled value={detailPasien?.HT} />
+                              </Form.Item>
+                              <Form.Item label="THROMBO">
+                                <Input name='THROMBO' disabled value={detailPasien?.THROMBO} />
+                              </Form.Item>
+                              <Form.Item label="HIV">
+                                <Input name='HIV' disabled value={detailPasien?.HIV} />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                        </Form>
+                        <Space>
+                          <Access accessible={access.canSeeLab}>
+                            <Button type='primary' onClick={() => setIsHasilLabModalOpen(true)}>Edit</Button>
+                          </Access>
+                        </Space>
                       </Space>
                       :
                       <Text>Belum hadir LAB</Text>
@@ -691,20 +806,59 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       <Modal
         title="Hasil Lab"
         open={isHasilLabModalOpen}
-        onOk={() => radiologiFormik.handleSubmit()}
+        onOk={() => hasilLabFormik.handleSubmit()}
         onCancel={() => setIsHasilLabModalOpen(false)}
         okText="Simpan"
         cancelText="Batal"
       >
-        <Form>
+        <Form
+          labelCol={{ span: 12 }}
+          wrapperCol={{ span: 80 }}
+          layout="horizontal"
+        >
           <Space direction='vertical'>
-            <Radio.Group name='tipe_hasil_rontgen' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.tipe_hasil_rontgen}>
-              <Radio value="USB">USB</Radio>
-              <Radio value="PRINT">PRINT</Radio>
-            </Radio.Group>
-            <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
-              <Input name='nomor_kertas_penyerahan' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.nomor_kertas_penyerahan} />
-            </Form.Item>
+            <Row>
+              <Col span={12}>
+                <Form.Item label="Tensi">
+                  <Input name='tensi' autoFocus onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.tensi} />
+                </Form.Item>
+                <Form.Item label="HB">
+                  <Input name='HB' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.HB} />
+                </Form.Item>
+                <Form.Item label="LEUCO">
+                  <Input name='LEUCO' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.LEUCO} />
+                </Form.Item>
+                <Form.Item label="BT">
+                  <Input name='BT' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.BT} />
+                </Form.Item>
+                <Form.Item label="GDS">
+                  <Input name='GDS' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.GDS} />
+                </Form.Item>
+                <Form.Item label="ERY">
+                  <Input name='ERY' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.ERY} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="CT">
+                  <Input name='CT' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.CT} />
+                </Form.Item>
+                <Form.Item label="Gol. Darah">
+                  <Input name='golongan_darah' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.golongan_darah} />
+                </Form.Item>
+                <Form.Item label="HBSAG">
+                  <Input name='HBSAG' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.HBSAG} />
+                </Form.Item>
+                <Form.Item label="HT">
+                  <Input name='HT' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.HT} />
+                </Form.Item>
+                <Form.Item label="THROMBO">
+                  <Input name='THROMBO' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.THROMBO} />
+                </Form.Item>
+                <Form.Item label="HIV">
+                  <Input name='HIV' onChange={hasilLabFormik.handleChange} value={hasilLabFormik.values.HIV} />
+                </Form.Item>
+              </Col>
+            </Row>
           </Space>
         </Form>
       </Modal>
