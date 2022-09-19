@@ -3,6 +3,11 @@ interface UserPermissionType {
     permissions: string[];
 }
 
+interface GroupType {
+    id: number;
+    name: string;
+}
+
 interface UserType {
     id: number;
     is_superuser: true;
@@ -12,5 +17,5 @@ interface UserType {
     email: "admin@admin.com";
     is_staff: true;
     is_active: true;
-    groups: [];
+    groups: GroupType[];
 }
