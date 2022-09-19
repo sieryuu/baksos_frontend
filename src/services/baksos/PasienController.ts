@@ -6,7 +6,7 @@ import { GetCurrentUserToken } from './UserController';
 
 export async function queryPasienList(page: number, pageSize: number) {
     return GetRequest<PaginationType<PasienType>>('/pasien/', {
-        offset: page - 1,
+        offset: (page - 1) * pageSize,
         limit: pageSize
     });
 }

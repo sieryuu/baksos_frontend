@@ -262,11 +262,14 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
                   disabled={IsDetailView && editState == false}
                 >
                   {
-                    _.uniqBy(puskesmases, (x) => {
-                      return x.pulau
-                    }).map(puskesmas =>
-                      <Select.Option key={puskesmas.pulau} value={puskesmas.pulau}>{puskesmas.pulau}</Select.Option>
-                    )
+                    _.sortBy(
+                      _.uniqBy(
+                        puskesmases, (x) => {
+                          return x.pulau
+                        }), x => x.pulau)
+                      .map(puskesmas =>
+                        <Select.Option key={puskesmas.pulau} value={puskesmas.pulau}>{puskesmas.pulau}</Select.Option>
+                      )
                   }
                 </Select>
               </Form.Item>
