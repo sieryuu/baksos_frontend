@@ -20,6 +20,7 @@ export default (initialState: { userPermission?: UserPermissionType } | undefine
     canSeeLab: canSeeLab || canSeeAdmin,
     canSeeEkg: canSeeEkg || canSeeAdmin,
     canSeeRontgen: canSeeRontgen || canSeeAdmin,
-    canSeeKartuKuning: canSeeKartuKuning || canSeeAdmin
+    canSeeKartuKuning: canSeeKartuKuning || canSeeAdmin,
+    canCreatePasien: canSeeAdmin || canSeePendaftaran
   };
 };

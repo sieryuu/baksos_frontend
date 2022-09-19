@@ -18,7 +18,7 @@ export default defineConfig({
       name: 'Pendaftaran Pasien',
       path: '/daftar-pasien',
       component: './DaftarPasien',
-      access: 'canSeePendaftaran',
+      access: 'canCreatePasien',
     },
     {
       name: 'List Pasien',
