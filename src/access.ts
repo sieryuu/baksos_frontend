@@ -1,5 +1,8 @@
-export default (initialState: any) => {
-  const { userPermission } = initialState
+export default (initialState: { userPermission?: UserPermissionType } | undefined) => {
+  const { userPermission } = initialState ?? {}
+  if (!userPermission)
+    return {}
+
   const user = userPermission.user as UserType;
 
   const canSeeAdmin = user.is_staff || user.is_superuser;

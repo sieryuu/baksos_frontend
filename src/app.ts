@@ -13,7 +13,7 @@ export async function getInitialState(): Promise<{ name: string, userPermission?
       history.push('/login');
     }
   }
-  return { name: "", userPermission: undefined }
+  return { name: '' }
 }
 
 export const layout = () => {

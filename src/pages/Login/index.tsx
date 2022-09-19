@@ -1,5 +1,6 @@
-import { login, SaveUserToken } from '@/services/baksos/UserController';
+import { getPermission, login, SaveUserToken } from '@/services/baksos/UserController';
 import { PageContainer } from '@ant-design/pro-components';
+import { useModel } from '@umijs/max';
 import { Card, notification, Row } from 'antd';
 import { Formik } from 'formik';
 import { Form, SubmitButton, Input } from 'formik-antd';
@@ -8,12 +9,15 @@ import * as Yup from 'yup';
 
 
 const LoginPage: React.FC = () => {
+  const { setInitialState } = useModel('@@initialState');
+
   const handleLogin = (values: LoginProps, actions: any) => {
     login(values)
-      .then((token) => {
+      .then(async (token) => {
         SaveUserToken(token.token);
+        const userPermission = await getPermission()
+        setInitialState({ name: userPermission.user.username, userPermission: userPermission })
         history.push('/')
-        actions.resetForm();
       })
       .catch(err => {
         let errDescription = ""
