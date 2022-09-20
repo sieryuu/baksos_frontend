@@ -17,6 +17,7 @@ import KartuPendingTemplate from '@/print_template/KartuPendingTemplate';
 import InfoConsentTemplate from '@/print_template/InfoConsentTemplate';
 import { queryPasienDetail, updatePasienDetail, createPasienDetail } from '@/services/baksos/PasienDetailController';
 import { Access, useAccess } from '@umijs/max';
+import { useForm } from 'antd/lib/form/Form';
 
 const { TextArea } = Input;
 const { Text } = Typography
@@ -89,6 +90,8 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   const [isRadiologiModalOpen, setIsRadiologiModalOpen] = useState(false)
   const [isLolosKKModalOpen, setIsLolosKKModalOpen] = useState(false)
   const [isPendingKKModalOpen, setIsPendingKKModalOpen] = useState(false)
+
+  const [kehadiranLabForm] = useForm()
 
   const retrievePasienKartuKuning = () => {
     if (pasien.id) {
@@ -196,15 +199,17 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
 
   const labFormik = useFormik<CapKehadiranLabType>({
     enableReinitialize: true,
-    // validationSchema: hadirLabValidationSchema,
     initialValues: {
       pasien_id: 0,
       hadir: true,
       perlu_radiologi: pasien && pasien.perlu_radiologi || false,
       perlu_ekg: pasien && pasien.perlu_ekg || false,
-      diagnosa: (pasien.penyakit !== "BENJOLAN") ? (pasien.diagnosa || "") : ""
+      diagnosa: (pasien.penyakit !== "BENJOLAN") ?
+        (pasien.diagnosa || "") :
+        (pasien.diagnosa && pasien.diagnosa !== "BENJOLAN" ? pasien.diagnosa : "")
     },
-    onSubmit: values => {
+    onSubmit: async values => {
+      await kehadiranLabForm.validateFields();
       if (pasien && pasien.id) {
         values.pasien_id = pasien.id
 
@@ -278,6 +283,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       .then(data => {
         notification["success"]({ message: `Cancel Lab Berhasil`, description: data });
         retrievePasien()
+        kehadiranLabForm.resetFields()
       }).catch(err => {
         notification["warning"]({ message: `Cancel Lab Gagal`, description: ParseResponseError(err) });
       })
@@ -794,16 +800,23 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         okText="Simpan &amp; Hadir"
         cancelText="Batal Simpan"
       >
-        <Form layout='vertical'>
+        <Form layout='vertical' form={kehadiranLabForm} initialValues={labFormik.initialValues}>
           <Form.Item label="Pemeriksaan Lanjutan:">
             <Checkbox name='perlu_radiologi' checked={labFormik.values.perlu_radiologi} onChange={labFormik.handleChange}>RADIOLOGY</Checkbox>
             <Checkbox name='perlu_ekg' checked={labFormik.values.perlu_ekg} onChange={labFormik.handleChange}>EKG</Checkbox>
           </Form.Item>
-          <Form.Item label={"Diagnosa Penyakit: " + (pasien.penyakit == "BENJOLAN" ? "(JENIS BIUS)" : "")}>
+          <Form.Item
+            label={"Diagnosa Penyakit: " + (pasien.penyakit == "BENJOLAN" ? "(JENIS BIUS)" : "")}
+            name="diagnosa"
+            rules={[{ required: true, message: 'wajib isi' }]}
+          >
             <Select
               showSearch
               value={labFormik.values.diagnosa}
-              onChange={value => labFormik.setFieldValue('diagnosa', value)}
+              onChange={value => {
+                kehadiranLabForm.setFieldValue('diagnosa', value)
+                labFormik.setFieldValue('diagnosa', value);
+              }}
               disabled={pasien.penyakit == "SUMBING" || pasien.penyakit == "HERNIA"}>
               {
                 (pasien.penyakit == "SUMBING" || pasien.penyakit == "HERNIA") ?
