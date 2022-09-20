@@ -86,6 +86,13 @@ const ListPasienPage: React.FC = () => {
           history.push(`/pasien/${data[0].id}`)
         }
         setPasiens(data)
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: data.length
+          }
+        })
       });
   }
 
@@ -93,6 +100,13 @@ const ListPasienPage: React.FC = () => {
     searchPasien(value)
       .then(data => {
         setPasiens(data)
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: data.length
+          }
+        })
       });
   }
 

@@ -422,19 +422,29 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
     <>
       <Space direction='vertical'>
         <ProCard title="Data Pasien" layout="default" bordered >
-          <Form layout="inline" labelWrap>
-            <Space>
-              <FormItemDisplay label='Nama Pasien' value={pasien.nama} />
-              <FormItemDisplay label='Nomor Identitas' value={pasien.nomor_identitas} />
-              <FormItemDisplay label='Tanggal Lahir' value={pasien.tanggal_lahir} />
-              <FormItemDisplay label='Diagnosa' value={pasien.diagnosa || ""} />
-            </Space>
-            <Space>
-              <FormItemDisplay label='Jenis Kelamin' value={pasien.jenis_kelamin} />
-              <FormItemDisplay label='Nomor Tlp' value={pasien.nomor_telepon} />
-              <FormItemDisplay label='Alamat' value={pasien.alamat} />
-              {/* <FormItemDisplay label='Last Status' value={pasien.last_status} /> */}
-            </Space>
+          <Form
+            layout="horizontal"
+            labelWrap
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 80 }}>
+            <Row>
+              <Col span={6}>
+                <FormItemDisplay label='Nama Pasien' value={pasien.nama} />
+                <FormItemDisplay label='Jenis Kelamin' value={pasien.jenis_kelamin} />
+              </Col>
+              <Col span={6}>
+                <FormItemDisplay label='Nomor Identitas' value={pasien.nomor_identitas} />
+                <FormItemDisplay label='Nomor Tlp' value={pasien.nomor_telepon} />
+              </Col>
+              <Col span={6}>
+                <FormItemDisplay label='Tanggal Lahir' value={pasien.tanggal_lahir} />
+                <FormItemDisplay label='Umur' value={pasien.umur} />
+              </Col>
+              <Col span={6}>
+                <FormItemDisplay label='Alamat' value={pasien.alamat} />
+                <FormItemDisplay label='Diagnosa' value={pasien.diagnosa || ""} />
+              </Col>
+            </Row>
           </Form>
         </ProCard>
         {
@@ -654,19 +664,26 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                 <ProCard title="RADIOLOGY" layout="default" bordered>
                   {
                     pasienScreening.telah_lewat_cek_radiologi != null ?
-                      <Form>
-                        <Space direction='vertical'>
+                      <Form
+                        layout="horizontal"
+                        colon={false}
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 40 }}
+                      >
+                        <Form.Item label="RADIOLOGY (MEDIA PENYIMPANAN DATA)">
                           <Radio.Group value={pasienScreening.tipe_hasil_rontgen} disabled>
                             <Radio value="USB">USB</Radio>
                             <Radio value="PRINT">PRINT</Radio>
                           </Radio.Group>
-                          <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
-                            <Input name='nomor_kertas_penyerahan' disabled value={pasienScreening.nomor_kertas_penyerahan} />
-                          </Form.Item>
+                        </Form.Item>
+                        <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
+                          <Input name='nomor_kertas_penyerahan' disabled value={pasienScreening.nomor_kertas_penyerahan} style={{ width: 300 }} />
+                        </Form.Item>
+                        <Form.Item label=" ">
                           <Access accessible={access.canSeeRontgen}>
                             <Button type='primary' onClick={() => setIsRadiologiModalOpen(true)}>Edit</Button>
                           </Access>
-                        </Space>
+                        </Form.Item>
                       </Form>
                       :
                       <Text>Belum hadir Radiologi</Text>
@@ -675,7 +692,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                 <ProCard title="Kartu Kuning" layout="default" bordered>
                   {
                     kartuKuning != null && kartuKuning.nomor != null ?
-                      <Form>
+                      <Form
+                        labelCol={{ span: 4 }}
+                        wrapperCol={{ span: 20 }}
+                        layout="horizontal"
+                      >
                         {
                           kartuKuning.status == "LOLOS" ?
                             <>
@@ -683,19 +704,27 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                               <FormItemDisplay label='Status' value={kartuKuning.status} />
                               <FormItemDisplay label='Tanggal Operasi' value={kartuKuning.tanggal_operasi} />
                               <FormItemDisplay label='Jam Operasi' value={kartuKuning.jam_operasi} />
-                              <FormItemDisplay label='Perhatian' value={kartuKuning.perhatian?.join(" | ")} />
+                              <Form.Item label="Perhatian">
+                                {
+                                  kartuKuning.perhatian?.map(item =>
+                                    <>
+                                      <Checkbox disabled checked>{item}</Checkbox><br />
+                                    </>
+                                  )
+                                }
+                              </Form.Item>
                             </>
                             :
                             kartuKuning.status == "PENDING" ?
-                              <Form>
-                                <FormItemDisplay label='Nomor Kartu Kuning' value={kartuKuning.nomor} />
+                              <>
+                                <FormItemDisplay label='No. Kartu Kuning Pending' value={kartuKuning.nomor} />
                                 <FormItemDisplay label='Status' value={kartuKuning.status} />
-                                <FormItemDisplay label='Perhatian' value={kartuKuning.perhatian?.join(" | ")} />
-                              </Form>
+                                <FormItemDisplay label='Perhatian' value={kartuKuning.perhatian ? kartuKuning.perhatian[0] : ""} />
+                              </>
                               :
-                              <Form>
+                              <>
                                 <FormItemDisplay label='Status' value={kartuKuning.status} />
-                              </Form>
+                              </>
                         }
                         {
                           kartuKuning.status == "LOLOS" ?
@@ -765,42 +794,40 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         okText="Simpan &amp; Hadir"
         cancelText="Batal Simpan"
       >
-        <Form>
-          <Space direction='vertical'>
-            <Form.Item>
-              <Checkbox name='perlu_radiologi' checked={labFormik.values.perlu_radiologi} onChange={labFormik.handleChange}>RADIOLOGY</Checkbox>
-              <Checkbox name='perlu_ekg' checked={labFormik.values.perlu_ekg} onChange={labFormik.handleChange}>EKG</Checkbox>
-            </Form.Item>
-            <Form.Item>
-              <Select
-                showSearch
-                value={labFormik.values.diagnosa}
-                onChange={value => labFormik.setFieldValue('diagnosa', value)}
-                disabled={pasien.penyakit == "SUMBING" || pasien.penyakit == "HERNIA"}>
-                {
-                  (pasien.penyakit == "SUMBING" || pasien.penyakit == "HERNIA") ?
-                    <Select.Option value={pasien.penyakit}>{pasien.penyakit}</Select.Option>
-                    :
-                    (pasien.penyakit == "BENJOLAN") ?
-                      (
-                        <>
-                          <Select.Option value="MINOR GA">MINOR GA</Select.Option>
-                          <Select.Option value="MINOR LOKAL">MINOR LOKAL</Select.Option>
-                        </>
-                      )
-                      :
-                      // sudah pasti katarak
-                      <>
-                        <Select.Option value="KATARAK">KATARAK</Select.Option>
-                        <Select.Option value="PTERYGIUM">PTERYGIUM</Select.Option>
-                      </>
-                }
-              </Select>
+        <Form layout='vertical'>
+          <Form.Item label="Pemeriksaan Lanjutan:">
+            <Checkbox name='perlu_radiologi' checked={labFormik.values.perlu_radiologi} onChange={labFormik.handleChange}>RADIOLOGY</Checkbox>
+            <Checkbox name='perlu_ekg' checked={labFormik.values.perlu_ekg} onChange={labFormik.handleChange}>EKG</Checkbox>
+          </Form.Item>
+          <Form.Item label={"Diagnosa Penyakit: " + (pasien.penyakit == "BENJOLAN" ? "(JENIS BIUS)" : "")}>
+            <Select
+              showSearch
+              value={labFormik.values.diagnosa}
+              onChange={value => labFormik.setFieldValue('diagnosa', value)}
+              disabled={pasien.penyakit == "SUMBING" || pasien.penyakit == "HERNIA"}>
               {
-                pasien.penyakit === "KATARAK" ? <Text italic>Mohon pastikan apakah ada perubahan penyakit pasien dari Katarak ke Pterygium</Text> : <></>
+                (pasien.penyakit == "SUMBING" || pasien.penyakit == "HERNIA") ?
+                  <Select.Option value={pasien.penyakit}>{pasien.penyakit}</Select.Option>
+                  :
+                  (pasien.penyakit == "BENJOLAN") ?
+                    (
+                      <>
+                        <Select.Option value="MINOR GA">MINOR GA</Select.Option>
+                        <Select.Option value="MINOR LOKAL">MINOR LOKAL</Select.Option>
+                      </>
+                    )
+                    :
+                    // sudah pasti katarak
+                    <>
+                      <Select.Option value="KATARAK">KATARAK</Select.Option>
+                      <Select.Option value="PTERYGIUM">PTERYGIUM</Select.Option>
+                    </>
               }
-            </Form.Item>
-          </Space>
+            </Select>
+            {
+              pasien.penyakit === "KATARAK" ? <Text italic>Mohon pastikan apakah ada perubahan penyakit pasien dari Katarak ke Pterygium</Text> : <></>
+            }
+          </Form.Item>
         </Form>
       </Modal>
       <Modal
@@ -870,16 +897,16 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         okText="Simpan"
         cancelText="Batal"
       >
-        <Form>
-          <Space direction='vertical'>
+        <Form layout="vertical">
+          <Form.Item label="RADIOLOGY (MEDIA PENYIMPANAN DATA):">
             <Radio.Group name='tipe_hasil_rontgen' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.tipe_hasil_rontgen}>
               <Radio value="USB">USB</Radio>
               <Radio value="PRINT">PRINT</Radio>
             </Radio.Group>
-            <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN">
-              <Input name='nomor_kertas_penyerahan' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.nomor_kertas_penyerahan} />
-            </Form.Item>
-          </Space>
+          </Form.Item>
+          <Form.Item label="Nomor Kertas Penyerahan USB RONTGEN:">
+            <Input name='nomor_kertas_penyerahan' onChange={radiologiFormik.handleChange} value={radiologiFormik.values.nomor_kertas_penyerahan} />
+          </Form.Item>
         </Form>
       </Modal>
       <Modal

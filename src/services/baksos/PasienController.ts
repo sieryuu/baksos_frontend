@@ -13,7 +13,7 @@ export async function queryPasienList(page: number, pageSize: number) {
 
 export async function queryPasienByNoSeri(no_seri: string) {
     return GetRequest<PasienType[]>('/pasien/', {
-        nomor_seri: no_seri
+        nomor_seri_icontains: no_seri
     });
 }
 
