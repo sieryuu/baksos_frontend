@@ -32,6 +32,7 @@ const LoginPage: React.FC = () => {
         notification["warning"]({
           message: `Login Gagal`,
           description: errDescription,
+          placement: "bottomRight"
         });
         actions.resetForm();
       })

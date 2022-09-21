@@ -59,6 +59,7 @@ const ListPasienPage: React.FC = () => {
         notification["success"]({
           message: 'Import sukses',
           description: (data as AxiosResponse).data,
+          placement: "bottomRight"
         });
         getPasienList();
       })
@@ -75,6 +76,7 @@ const ListPasienPage: React.FC = () => {
         notification["warning"]({
           message: 'Import Gagal',
           description: errDescription,
+          placement: "bottomRight"
         });
       })
   }

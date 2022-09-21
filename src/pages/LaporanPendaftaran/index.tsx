@@ -17,7 +17,7 @@ const LaporanPendaftaranPage: React.FC = () => {
         setLaporanPendaftaran(data)
       })
       .catch(err => {
-        notification["warning"]({ message: 'Penarikan Laporan Pendaftaran Gagal', description: ParseResponseError(err) });
+        notification["warning"]({ message: 'Penarikan Laporan Pendaftaran Gagal', description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
@@ -30,6 +30,7 @@ const LaporanPendaftaranPage: React.FC = () => {
         notification["warning"]({
           message: `Download Gagal`,
           description: ParseResponseError(err),
+          placement: "bottomRight"
         });
       })
   }

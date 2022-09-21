@@ -17,7 +17,7 @@ const LaporanScreeningPage: React.FC = () => {
         setLaporanScreening(data)
       })
       .catch(err => {
-        notification["warning"]({ message: 'Penarikan Laporan Screening Gagal', description: ParseResponseError(err) });
+        notification["warning"]({ message: 'Penarikan Laporan Screening Gagal', description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
@@ -30,6 +30,7 @@ const LaporanScreeningPage: React.FC = () => {
         notification["warning"]({
           message: `Download Gagal`,
           description: ParseResponseError(err),
+          placement: "bottomRight"
         });
       })
   }

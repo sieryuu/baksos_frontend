@@ -52,6 +52,7 @@ const PasienDetailPage: React.FC = () => {
           notification["success"]({
             message: `Kehadiran pasien berhasil ditambahkan`,
             description: data as string,
+            placement: "bottomRight"
           });
           retrievePasien()
         })
@@ -68,6 +69,7 @@ const PasienDetailPage: React.FC = () => {
           notification["warning"]({
             message: `Submit Antrian Gagal`,
             description: errDescription,
+            placement: "bottomRight"
           });
         })
         .finally(() => {
@@ -84,10 +86,10 @@ const PasienDetailPage: React.FC = () => {
     if (pasien.id)
       batalNomorAntrian(pasien.id)
         .then(data => {
-          notification["success"]({ message: `Cancel Kehadiran Pasien Berhasil`, description: data });
+          notification["success"]({ message: `Cancel Kehadiran Pasien Berhasil`, description: data, placement: "bottomRight" });
           retrievePasien()
         }).catch(err => {
-          notification["warning"]({ message: `Cancel Kehadiran Pasien Gagal`, description: ParseResponseError(err) });
+          notification["warning"]({ message: `Cancel Kehadiran Pasien Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
         })
   }
 

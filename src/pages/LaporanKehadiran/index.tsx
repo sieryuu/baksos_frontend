@@ -17,7 +17,7 @@ const LaporanKehadiranPage: React.FC = () => {
         setLaporanKehadiran(data)
       })
       .catch(err => {
-        notification["warning"]({ message: 'Penarikan Laporan Kehadiran Gagal', description: ParseResponseError(err) });
+        notification["warning"]({ message: 'Penarikan Laporan Kehadiran Gagal', description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
@@ -30,6 +30,7 @@ const LaporanKehadiranPage: React.FC = () => {
         notification["warning"]({
           message: `Download Gagal`,
           description: ParseResponseError(err),
+          placement: "bottomRight"
         });
       })
   }

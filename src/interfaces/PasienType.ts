@@ -24,6 +24,7 @@ interface PasienType {
 
     nomor_antrian?: string;
     tanggal_nomor_antrian?: Date;
+    tanggal_nomor_antrian_pertama?: Date;
     perlu_rescreen?: boolean;
     perlu_radiologi?: boolean;
     perlu_ekg?: boolean;

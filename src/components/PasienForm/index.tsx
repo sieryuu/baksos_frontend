@@ -91,6 +91,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
         notification["success"]({
           message: `Pasien berhasil ${isEdit ? 'diperbaharui' : 'terdaftar'}`,
           description: 'Klik untuk masuk ke halaman pasien.',
+          placement: "bottomRight",
           onClick: () => history.push(`/pasien/${data.id}`)
         });
         actions.resetForm();
@@ -101,6 +102,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
         notification["warning"]({
           message: `${isEdit ? 'Pembaharuan' : 'Pendaftaran'} pasien gagal! (${err.response.status})`,
           description: ParseResponseError(err),
+          placement: "bottomRight",
         });
       })
       .finally(() => {
@@ -163,7 +165,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="nomor_seri" label="Nomor Seri Formulir">
-                <Input name="nomor_seri" style={{ width: '200px' }} disabled={IsDetailView && editState == false} />
+                <Input name="nomor_seri" style={{ width: '200px' }} disabled={IsDetailView && editState == false} maxLength={20} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -189,7 +191,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             <Col span={12} />
             <Col span={12}>
               <Form.Item name="nama" label="Nama">
-                <Input name="nama" disabled={IsDetailView && editState == false} />
+                <Input name="nama" disabled={IsDetailView && editState == false} maxLength={50} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -208,7 +210,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="nomor_identitas" label="No. identitas">
-                <Input name="nomor_identitas" disabled={IsDetailView && editState == false} />
+                <Input name="nomor_identitas" disabled={IsDetailView && editState == false} maxLength={30} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -227,6 +229,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
                           ref={inputRef}
                           value={newTipeIdentitas}
                           onChange={onNewTipeIdentitasChange}
+                          maxLength={29}
                         />
                         <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
                           Add item
@@ -246,12 +249,12 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item name="alamat" label="Alamat Lengkap">
-                <TextArea name="alamat" rows={3} disabled={IsDetailView && editState == false} />
+                <TextArea name="alamat" rows={3} disabled={IsDetailView && editState == false} maxLength={100} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="nomor_telepon" label="No Telp">
-                <Input name="nomor_telepon" autoComplete='off' disabled={IsDetailView && editState == false} />
+                <Input name="nomor_telepon" autoComplete='off' disabled={IsDetailView && editState == false} maxLength={30} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -277,7 +280,7 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             <Col span={12} />
             <Col span={12}>
               <Form.Item name="tempat_lahir" label="Tempat Lahir">
-                <Input name="tempat_lahir" disabled={IsDetailView && editState == false} />
+                <Input name="tempat_lahir" disabled={IsDetailView && editState == false} maxLength={30} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -304,12 +307,12 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
             <Divider orientation="left">Data Keluarga Pasien</Divider>
             <Col span={12}>
               <Form.Item name="nama_keluarga" label="Nama Keluarga yang bisa di hub.">
-                <Input name="nama_keluarga" disabled={IsDetailView && editState == false} />
+                <Input name="nama_keluarga" disabled={IsDetailView && editState == false} maxLength={50} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="nomor_telepon_keluarga" label="No. Telp Keluarga">
-                <Input name="nomor_telepon_keluarga" disabled={IsDetailView && editState == false} />
+                <Input name="nomor_telepon_keluarga" disabled={IsDetailView && editState == false} maxLength={30} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -322,14 +325,14 @@ const PasienForm: React.FC<PasienFormProps> = (props) => {
                 }}>Samakan data pendamping dengan keluarga yang bisa dihubungi</Checkbox>
               </Form.Item>
               <Form.Item name="nama_pendamping" label="Nama Pendamping">
-                <Input name="nama_pendamping" disabled={IsDetailView && editState == false} />
+                <Input name="nama_pendamping" disabled={IsDetailView && editState == false} maxLength={50} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="pendamping_cb_2" label=" " style={{ marginBottom: 0 }}>
               </Form.Item>
               <Form.Item name="nomor_telepon_pendamping" label="No. Telp Pendamping">
-                <Input name="nomor_telepon_pendamping" disabled={IsDetailView && editState == false} />
+                <Input name="nomor_telepon_pendamping" disabled={IsDetailView && editState == false} maxLength={30} />
               </Form.Item>
             </Col>
             {

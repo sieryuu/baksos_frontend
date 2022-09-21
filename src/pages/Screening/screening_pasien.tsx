@@ -129,20 +129,20 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         hadir: hadir,
         pasien_id: pasien.id
       }).then(data => {
-        notification["success"]({ message: `Update Tensi Berhasil`, description: data });
+        notification["success"]({ message: `Update Tensi Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Update Tensi Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Update Tensi Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
   const cancelTensi = () => {
     CancelTensi(pasienScreening.id)
       .then(data => {
-        notification["success"]({ message: `Cancel Tensi Berhasil`, description: data });
+        notification["success"]({ message: `Cancel Tensi Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Cancel Tensi Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Cancel Tensi Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
@@ -150,10 +150,10 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
     if (pasien.id)
       PendingTensi(pasien.id)
         .then(data => {
-          notification["success"]({ message: `Pending Tensi Berhasil`, description: data });
+          notification["success"]({ message: `Pending Tensi Berhasil`, description: data, placement: "bottomRight" });
           retrievePasien()
         }).catch(err => {
-          notification["warning"]({ message: `Pending Tensi Gagal`, description: ParseResponseError(err) });
+          notification["warning"]({ message: `Pending Tensi Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
         })
   }
   //#endregion
@@ -165,20 +165,20 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         hadir: hadir,
         pasien_id: pasien.id
       }).then(data => {
-        notification["success"]({ message: `Update Pemeriksaan Berhasil`, description: data });
+        notification["success"]({ message: `Update Pemeriksaan Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Update Pemeriksaan Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Update Pemeriksaan Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
   const cancelPemeriksaan = () => {
     CancelPemeriksaan(pasienScreening.id)
       .then(data => {
-        notification["success"]({ message: `Cancel Pemeriksaan Berhasil`, description: data });
+        notification["success"]({ message: `Cancel Pemeriksaan Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Cancel Pemeriksaan Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Cancel Pemeriksaan Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
   //#endregion
@@ -191,10 +191,10 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       diagnosa: values.diagnosa
     })
       .then(() => {
-        notification["success"]({ message: `Update Detail Lab Berhasil`, description: "Detail Lab Pasien berhasil di update" })
+        notification["success"]({ message: `Update Detail Lab Berhasil`, description: "Detail Lab Pasien berhasil di update", placement: "bottomRight" })
         retrievePasien()
       })
-      .catch(err => notification["warning"]({ message: `Update Detail Lab Gagal`, description: ParseResponseError(err) }))
+      .catch(err => notification["warning"]({ message: `Update Detail Lab Gagal`, description: ParseResponseError(err), placement: "bottomRight" }))
   }
 
   const labFormik = useFormik<CapKehadiranLabType>({
@@ -218,10 +218,10 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
           setIsLabModalOpen(false)
         } else {
           CapKehadiranLab(values).then(data => {
-            notification["success"]({ message: `Update Lab Berhasil`, description: data });
+            notification["success"]({ message: `Update Lab Berhasil`, description: data, placement: "bottomRight" });
             retrievePasien()
           }).catch(err => {
-            notification["warning"]({ message: `Update Lab Gagal`, description: ParseResponseError(err) });
+            notification["warning"]({ message: `Update Lab Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
           }).finally(() => setIsLabModalOpen(false))
         }
       }
@@ -253,11 +253,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
           // update
           updatePasienDetail(detailPasien.id, values)
             .then(data => {
-              notification["success"]({ message: `Update Hasil Lab Berhasil`, description: "" });
+              notification["success"]({ message: `Update Hasil Lab Berhasil`, description: "", placement: "bottomRight" });
               retrievePasien()
               retrieveDetailPasien()
             }).catch(err => {
-              notification["warning"]({ message: `Update Hasil Lab Gagal`, description: ParseResponseError(err) });
+              notification["warning"]({ message: `Update Hasil Lab Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
             }).finally(() => {
               setIsHasilLabModalOpen(false)
             })
@@ -265,11 +265,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
           // create
           createPasienDetail(values)
             .then(data => {
-              notification["success"]({ message: `Create Hasil Lab Berhasil`, description: "" });
+              notification["success"]({ message: `Create Hasil Lab Berhasil`, description: "", placement: "bottomRight" });
               retrievePasien()
               retrieveDetailPasien()
             }).catch(err => {
-              notification["warning"]({ message: `Create Hasil Lab Gagal`, description: ParseResponseError(err) });
+              notification["warning"]({ message: `Create Hasil Lab Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
             }).finally(() => {
               setIsHasilLabModalOpen(false)
             })
@@ -281,11 +281,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   const cancelLab = () => {
     CancelLab(pasienScreening.id)
       .then(data => {
-        notification["success"]({ message: `Cancel Lab Berhasil`, description: data });
+        notification["success"]({ message: `Cancel Lab Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
         kehadiranLabForm.resetFields()
       }).catch(err => {
-        notification["warning"]({ message: `Cancel Lab Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Cancel Lab Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
   //#endregion
@@ -297,10 +297,10 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         hadir: hadir,
         pasien_id: pasien.id
       }).then(data => {
-        notification["success"]({ message: `Update Radiologi Berhasil`, description: data });
+        notification["success"]({ message: `Update Radiologi Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Update Radiologi Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Update Radiologi Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
@@ -315,11 +315,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         pasienScreening.id,
         values
       ).then(data => {
-        notification["success"]({ message: `Update Hasil Radiologi Berhasil`, description: data });
+        notification["success"]({ message: `Update Hasil Radiologi Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
         setIsRadiologiModalOpen(false)
       }).catch(err => {
-        notification["warning"]({ message: `Update Hasil Radiologi Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Update Hasil Radiologi Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
     },
   });
@@ -327,10 +327,10 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   const cancelRadiologi = () => {
     CancelRadiologi(pasienScreening.id)
       .then(data => {
-        notification["success"]({ message: `Cancel Radiologi Berhasil`, description: data });
+        notification["success"]({ message: `Cancel Radiologi Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Cancel Radiologi Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Cancel Radiologi Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
   //#endregion
@@ -342,20 +342,20 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         hadir: hadir,
         pasien_id: pasien.id
       }).then(data => {
-        notification["success"]({ message: `Update Ekg Berhasil`, description: data });
+        notification["success"]({ message: `Update Ekg Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Update Ekg Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Update Ekg Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
   const cancelEkg = () => {
     CancelEkg(pasienScreening.id)
       .then(data => {
-        notification["success"]({ message: `Cancel Ekg Berhasil`, description: data });
+        notification["success"]({ message: `Cancel Ekg Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Cancel Ekg Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Cancel Ekg Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
   //#endregion
@@ -367,20 +367,20 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         hadir: hadir,
         pasien_id: pasien.id
       }).then(data => {
-        notification["success"]({ message: `Update Kartu Kuning Berhasil`, description: data });
+        notification["success"]({ message: `Update Kartu Kuning Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Update Kartu Kuning Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Update Kartu Kuning Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
   const cancelKartuKuning = () => {
     CancelKK(pasienScreening.id)
       .then(data => {
-        notification["success"]({ message: `Cancel Kartu Kuning Berhasil`, description: data });
+        notification["success"]({ message: `Cancel Kartu Kuning Berhasil`, description: data, placement: "bottomRight" });
         retrievePasien()
       }).catch(err => {
-        notification["warning"]({ message: `Cancel Kartu Kuning Gagal`, description: ParseResponseError(err) });
+        notification["warning"]({ message: `Cancel Kartu Kuning Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
       })
   }
 
@@ -398,13 +398,13 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
           pasien.id,
           values
         ).then(data => {
-          notification["success"]({ message: `Update Hasil Kartu Kuning Berhasil`, description: data });
+          notification["success"]({ message: `Update Hasil Kartu Kuning Berhasil`, description: data, placement: "bottomRight" });
           retrievePasien()
           retrievePasienKartuKuning()
           setIsLolosKKModalOpen(false)
           setIsPendingKKModalOpen(false)
         }).catch(err => {
-          notification["warning"]({ message: `Update Hasil Kartu Kuning Gagal`, description: ParseResponseError(err) });
+          notification["warning"]({ message: `Update Hasil Kartu Kuning Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
         })
       }
     },
@@ -414,11 +414,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
     if (pasien.id) {
       BatalSerahKartuKuning(pasien.id)
         .then(data => {
-          notification["success"]({ message: `Cancel Hasil Kartu Kuning Berhasil`, description: data });
+          notification["success"]({ message: `Cancel Hasil Kartu Kuning Berhasil`, description: data, placement: "bottomRight" });
           retrievePasien()
           retrievePasienKartuKuning()
         }).catch(err => {
-          notification["warning"]({ message: `Cancel Hasil Kartu Kuning Gagal`, description: ParseResponseError(err) });
+          notification["warning"]({ message: `Cancel Hasil Kartu Kuning Gagal`, description: ParseResponseError(err), placement: "bottomRight" });
         })
     }
   }
@@ -463,9 +463,9 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                   <Card.Grid style={screeningPasienCard}>
                     <Title level={5}>Tensi <ProgressIcon isPass={pasienScreening?.telah_lewat_cek_tensi} /></Title>
                     {
-                      pasien.perlu_rescreen && moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day")
+                      pasien.perlu_rescreen && moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day") && pasien.tanggal_nomor_antrian_pertama == null
                         ?
-                        <Text>Pasien Akan Recreening Besok</Text>
+                        <Text>Pasien Akan Rescreening Besok</Text>
                         :
                         pasienScreening?.telah_lewat_cek_tensi != null ?
                           <Space direction='vertical'>
@@ -528,7 +528,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                         :
                         <Space direction='vertical'>
                           <Access accessible={access.canSeeLab}>
-                            <Button type='primary' onClick={() => setIsLabModalOpen(true)}>HADIR</Button>
+                            <Button type='primary' disabled={!pasienScreening.telah_lewat_pemeriksaan} onClick={() => setIsLabModalOpen(true)}>HADIR</Button>
                           </Access>
                         </Space>
                     }
@@ -582,7 +582,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                         :
                         <Space direction='vertical'>
                           <Access accessible={access.canSeeKartuKuning}>
-                            <Button type='primary' onClick={() => capHadirKartuKuning(true)}>HADIR</Button>
+                            <Button type='primary' disabled={!pasienScreening.telah_lewat_pemeriksaan} onClick={() => capHadirKartuKuning(true)}>HADIR</Button>
                           </Access>
                         </Space>
                     }
@@ -734,20 +734,24 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
                         }
                         {
                           kartuKuning.status == "LOLOS" ?
-                            <Access accessible={access.canSeeKartuKuning}>
-                              <Form.Item style={{ marginBottom: "10px" }}>
-                                <ReactToPrint
-                                  trigger={() => <Button type='primary' >PRINT KARTU KUNING</Button>}
-                                  content={() => kartuKuningRef.current}
-                                />
-                              </Form.Item>
-                              <Form.Item style={{ marginBottom: "10px" }}>
-                                <ReactToPrint
-                                  trigger={() => <Button>PRINT INFO CONSENT</Button>}
-                                  content={() => printInfoConsentRef.current}
-                                />
-                              </Form.Item>
-                            </Access>
+                            <>
+                              <Access accessible={access.canSeeKartuKuning}>
+                                <Form.Item style={{ marginBottom: "10px" }}>
+                                  <ReactToPrint
+                                    trigger={() => <Button type='primary' >PRINT KARTU KUNING</Button>}
+                                    content={() => kartuKuningRef.current}
+                                  />
+                                </Form.Item>
+                              </Access>
+                              <Access accessible={access.canSeeKartuKuning || access.canSeePendaftaran}>
+                                <Form.Item style={{ marginBottom: "10px" }}>
+                                  <ReactToPrint
+                                    trigger={() => <Button>PRINT INFO CONSENT</Button>}
+                                    content={() => printInfoConsentRef.current}
+                                  />
+                                </Form.Item>
+                              </Access>
+                            </>
                             :
                             kartuKuning.status == "PENDING" ?
                               <Access accessible={access.canSeeKartuKuning}>

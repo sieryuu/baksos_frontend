@@ -47,6 +47,7 @@ const ScreeningPage: React.FC = () => {
       notification["warning"]({
         message: 'Silahkan pilih penyakit untuk lanjut',
         description: 'Silahkan klik salah satu penyakit untuk mencari.',
+        placement: "bottomRight"
       });
       return
     }
@@ -57,6 +58,7 @@ const ScreeningPage: React.FC = () => {
           notification["warning"]({
             message: 'Please find administrator!!!',
             description: 'Found multiple records when searching pasien by nomor antrian',
+            placement: "bottomRight"
           });
           return
         }
@@ -66,6 +68,7 @@ const ScreeningPage: React.FC = () => {
           notification["warning"]({
             message: 'Pasien tidak ditemukan',
             description: `Pasien tidak ditemukan dengan nomor antrian [${value}] dan penyakit grup [${selectedPenyakit}]`,
+            placement: "bottomRight"
           });
           setPasien(undefined)
         }
