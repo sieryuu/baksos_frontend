@@ -14,11 +14,11 @@ export default class InfoConsentTemplate extends React.PureComponent<InfoConsent
     console.log(isBocah)
 
     return (
-      <div style={{ fontSize: '15px' }}>
+      <div style={{ fontSize: '15px', color: 'green' }}>
         <table style={{ width: '100%' }}>
           <tbody>
-            <tr style={{ verticalAlign: 'top', height: "215px" }} >
-              <th style={{ width: '25%' }} />
+            <tr style={{ verticalAlign: 'top', height: "258px" }} >
+              <th style={{ width: '30%' }} />
               <th style={{ width: '15%' }}> </th>
               <th style={{ width: '45%' }}> </th>
               <th style={{ width: '15%' }}> </th>
@@ -39,7 +39,7 @@ export default class InfoConsentTemplate extends React.PureComponent<InfoConsent
               <td />
               <td style={{ verticalAlign: "TOP" }} colSpan={2}>{isBocah ? "" : pasien.nomor_telepon}</td>
             </tr>
-            <tr style={{ height: "100px" }}>
+            <tr style={{ height: "110px" }}>
               <td />
               <td style={{ verticalAlign: "TOP" }} colSpan={2}>{isBocah ? "" : pasien.nomor_identitas + "(" + pasien.tipe_identitas + ")"}</td>
             </tr>
