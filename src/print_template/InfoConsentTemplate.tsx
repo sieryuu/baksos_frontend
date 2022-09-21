@@ -14,7 +14,7 @@ export default class InfoConsentTemplate extends React.PureComponent<InfoConsent
     console.log(isBocah)
 
     return (
-      <div style={{ fontSize: '15px', color: 'green' }}>
+      <div style={{ fontSize: '15px' }}>
         <table style={{ width: '100%' }}>
           <tbody>
             <tr style={{ verticalAlign: 'top', height: "258px" }} >
