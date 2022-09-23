@@ -1,14 +1,15 @@
 import { PageContainer } from '@ant-design/pro-components';
 import type { ColumnsType } from 'antd/es/table';
-import { Button, Card, Input, notification, Space, Table, TablePaginationConfig, Upload } from 'antd';
+import { Button, Card, Input, notification, Space, Table, TablePaginationConfig, Tooltip, Upload } from 'antd';
 import { history } from 'umi';
 import Title from 'antd/lib/typography/Title';
 import { getPasienTemplate, importPasien, queryPasienByNoSeri, queryPasienList, searchPasien } from '@/services/baksos/PasienController';
 import { useEffect, useState } from 'react';
 import { downloadFile } from '@/utils/common';
-import { UploadOutlined } from '@ant-design/icons';
+import { CopyOutlined, UploadOutlined } from '@ant-design/icons';
 import { AxiosResponse } from '@umijs/max';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
+import copy from 'copy-to-clipboard';
 
 const { Search } = Input
 
@@ -158,6 +159,37 @@ const ListPasienPage: React.FC = () => {
       dataIndex: 'alamat',
       key: 'alamat',
     },
+    {
+      title: 'No. Antrian',
+      dataIndex: "nomor_antrian",
+    },
+    {
+      title: 'No. Kartu Kuning',
+      dataIndex: ['kartukuning', 'nomor'],
+    },
+    // {
+    //   title: 'Copy',
+    //   render: (text, record) => (
+    //     <Tooltip title="copy">
+    //       <Button onClick={(e) => {
+    //         e.stopPropagation()
+    //         copy([
+    //           record.nomor_seri,
+    //           record.nama,
+    //           record.jenis_kelamin,
+    //           record.tanggal_lahir,
+    //           record.penyakit,
+    //           record.nomor_identitas,
+    //           record.nomor_telepon,
+    //           record.alamat,
+    //           record.nomor_antrian,
+    //           record.kartukuning.nomor
+    //         ].join('\t'))
+    //       }}
+    //         shape="circle" icon={<CopyOutlined />} />
+    //     </Tooltip>
+    //   ),
+    // },
   ];
 
   const data: PasienType[] = pasiens;

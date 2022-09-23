@@ -949,6 +949,9 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
               locale={locale}
               name='tanggal'
               value={moment(kartuKuningFormik.values.tanggal, "YYYY-MM-DD")}
+              disabledDate={current => {
+                return current < moment("2022-09-30", "YYYY-MM-DD") || current > moment("2022-10-03", "YYYY-MM-DD")
+              }}
               onChange={(values) => kartuKuningFormik.setFieldValue('tanggal', values?.format("YYYY-MM-DD"))} />
           </Form.Item>
           <Form.Item name="jam" label="Jam Operasi">

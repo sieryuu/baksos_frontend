@@ -28,4 +28,6 @@ interface PasienType {
     perlu_rescreen?: boolean;
     perlu_radiologi?: boolean;
     perlu_ekg?: boolean;
+
+    kartukuning: KartuKuningType;
 }

@@ -10,7 +10,7 @@ export default class KartuKuningTemplate extends React.PureComponent<KartuKuning
   render() {
     const { pasien, kartuKuning } = this.props;
     return (
-      <div style={{ fontSize: '14px', color: 'blue' }}>
+      <div style={{ fontSize: '14px' }}>
         <table style={{ width: '100%' }}>
           <tbody>
             <tr style={{ verticalAlign: 'top', height: "152px" }} >

@@ -141,13 +141,12 @@ const PasienDetailPage: React.FC = () => {
                           </Form.Item>
                         </Access>
                     }
-
                   </Space>
                 </Row>
                 <Row justify='center'>
                   {
                     pasienSudahDaftar && pasienAbsenHariIni &&
-                    <Access accessible={access.canSeeAdmin}>
+                    <Access accessible={access.canSeeAdmin || (access.canSeePendaftaran && pasien.last_status == "DAFTAR")}>
                       <Button type='link' danger size='small' onClick={cancelNomorAntrian}>Cancel Kehadiran</Button>
                     </Access>
                   }
