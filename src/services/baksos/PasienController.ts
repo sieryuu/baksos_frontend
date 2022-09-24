@@ -84,8 +84,14 @@ export async function importPasien(file: any) {
     })
 }
 
-export async function SerahKartuKuning(pasien_id: number, values: SerahKartuKuningType) {
-    return PostRequest<string>(`/pasien/${pasien_id}/serah_kartu_kuning/`, values)
+export async function SerahKartuKuning(pasien_id: number, values: any) {
+    return PostRequest<string>(`/pasien/${pasien_id}/serah_kartu_kuning/`, {
+        ...values,
+        ...{
+            tanggal: values.tanggal ? values.tanggal.format("YYYY-MM-DD") : null,
+            jam: values.jam ? values.jam.format("HH:mm") : null,
+        }
+    })
 }
 
 export async function BatalSerahKartuKuning(pasien_id: number) {

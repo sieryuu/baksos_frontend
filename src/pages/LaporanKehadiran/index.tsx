@@ -2,7 +2,7 @@ import { downloadLaporanKehadiran, queryLaporanKehadiran } from '@/services/baks
 import { ParseResponseError } from '@/utils/requests';
 import { PageContainer } from '@ant-design/pro-components';
 import { Access, useAccess } from '@umijs/max';
-import { Button, notification, Table } from 'antd';
+import { Button, Checkbox, notification, Select, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import Text from 'antd/lib/typography'
 import { ColumnsType } from 'antd/es/table';
@@ -10,9 +10,10 @@ import { downloadFile } from '@/utils/common';
 
 const LaporanKehadiranPage: React.FC = () => {
   const [laporanKehadiran, setLaporanKehadiran] = useState<any>()
+  const [tanggalReport, setTanggalReport] = useState<string>()
 
-  const getLaporanKehadiran = () => {
-    queryLaporanKehadiran()
+  const getLaporanKehadiran = (tgl: string) => {
+    queryLaporanKehadiran(tgl)
       .then(data => {
         setLaporanKehadiran(data)
       })
@@ -36,96 +37,68 @@ const LaporanKehadiranPage: React.FC = () => {
   }
 
   useEffect(() => {
-    getLaporanKehadiran()
-  }, [])
+    if (tanggalReport)
+      getLaporanKehadiran(tanggalReport)
+  }, [tanggalReport])
 
-  if (!laporanKehadiran) return <Text>Loading</Text>
+  // if (!laporanKehadiran) return <Text>Loading</Text>
 
   const columns: ColumnsType<LaporanKehadiranTypeTable> = [
     {
-      title: 'Diagnosa',
-      dataIndex: 'diagnosa',
-      key: 'diagnosa',
+      title: 'PUSKESMAS',
+      dataIndex: 'PUSKESMAS',
+      key: 'PUSKESMAS',
     },
     {
-      title: 'Total Daftar',
-      dataIndex: 'total_daftar',
-      key: 'total_daftar'
+      title: 'PULAU',
+      dataIndex: 'PULAU',
+      key: 'PULAU',
     },
     {
-      title: 'Total Tidak Hadir',
-      dataIndex: 'total_tidak_hadir',
-      key: 'total_tidak_hadir'
+      title: 'KATARAK',
+      dataIndex: 'KATARAK',
+      key: 'KATARAK',
     },
     {
-      title: 'Total Pasien Hadir',
-      dataIndex: 'total_pasien_hadir',
-      key: 'total_pasien_hadir'
+      title: 'HERNIA',
+      dataIndex: 'HERNIA',
+      key: 'HERNIA',
     },
     {
-      title: 'Total Kehadiran Hari Pertama',
-      dataIndex: 'total_kehadiran_hari_pertama',
-      key: 'total_kehadiran_hari_pertama'
+      title: 'SUMBING',
+      dataIndex: 'SUMBING',
+      key: 'SUMBING',
     },
     {
-      title: 'Total Kehadiran Pendaftaran',
-      dataIndex: 'total_kehadiran_pendaftaran',
-      key: 'total_kehadiran_pendaftaran'
+      title: 'BENJOLAN',
+      dataIndex: 'BENJOLAN',
+      key: 'BENJOLAN',
     },
     {
-      title: 'Total Kehadiran Fisik',
-      dataIndex: 'total_kehadiran_fisik',
-      key: 'total_kehadiran_fisik'
-    },
-    {
-      title: 'Total Kehadiran Mata',
-      dataIndex: 'total_kehadiran_mata',
-      key: 'total_kehadiran_mata'
-    },
-    {
-      title: 'Total Kehadiran Lab',
-      dataIndex: 'total_kehadiran_lab',
-      key: 'total_kehadiran_lab'
-    },
-    {
-      title: 'Total Kehadiran Radiologi',
-      dataIndex: 'total_kehadiran_radiologi',
-      key: 'total_kehadiran_radiologi'
-    },
-    {
-      title: 'Total Kehadiran Ekg',
-      dataIndex: 'total_kehadiran_ekg',
-      key: 'total_kehadiran_ekg'
-    },
-    {
-      title: 'Total Kehadiran Hari Kedua',
-      dataIndex: 'total_kehadiran_hari_kedua',
-      key: 'total_kehadiran_hari_kedua'
-    },
-    {
-      title: 'Total Kehadiran Rescreening',
-      dataIndex: 'total_kehadiran_rescreening',
-      key: 'total_kehadiran_rescreening'
+      title: 'TOTAL',
+      dataIndex: 'TOTAL',
+      key: 'TOTAL',
     },
   ];
 
-  const data: LaporanKehadiranTypeTable[] = Object.keys(laporanKehadiran).map(key => {
-    return {
-      diagnosa: key,
-      ...laporanKehadiran[key]
-    }
-  });
+  const data: LaporanKehadiranTypeTable[] = laporanKehadiran;
 
   return (
-    <PageContainer ghost extra={[
-      <Button key="download_report" onClick={downloadReport}>Download Report</Button>,
-    ]}>
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey="id"
-      />
-
+    <PageContainer ghost>
+      <Select onChange={(value) => setTanggalReport(value)} style={{ width: 300 }}>
+        <Select.Option value={"2022-09-24"}>24-09-2022</Select.Option>
+        <Select.Option value={"2022-09-25"}>25-09-2022</Select.Option>
+      </Select>
+      {
+        laporanKehadiran &&
+        <Table
+          size='small'
+          columns={columns}
+          dataSource={data}
+          rowKey="id"
+          pagination={{ pageSize: 100 }}
+        />
+      }
     </PageContainer>
   );
 };

@@ -2,17 +2,17 @@ import { downloadLaporanScreening, queryLaporanScreening } from '@/services/baks
 import { ParseResponseError } from '@/utils/requests';
 import { PageContainer } from '@ant-design/pro-components';
 import { Access, useAccess } from '@umijs/max';
-import { Button, notification, Table } from 'antd';
+import { Button, notification, Select, Table } from 'antd';
 import { useEffect, useState } from 'react';
-import Text from 'antd/lib/typography'
 import { ColumnsType } from 'antd/es/table';
 import { downloadFile } from '@/utils/common';
 
 const LaporanScreeningPage: React.FC = () => {
   const [laporanScreening, setLaporanScreening] = useState<any>()
+  const [tanggalReport, setTanggalReport] = useState<string>()
 
-  const getLaporanScreening = () => {
-    queryLaporanScreening()
+  const getLaporanScreening = (tgl: string) => {
+    queryLaporanScreening(tgl)
       .then(data => {
         setLaporanScreening(data)
       })
@@ -36,95 +36,62 @@ const LaporanScreeningPage: React.FC = () => {
   }
 
   useEffect(() => {
-    getLaporanScreening()
-  }, [])
-
-  if (!laporanScreening) return <Text>Loading</Text>
+    if (tanggalReport)
+      getLaporanScreening(tanggalReport)
+  }, [tanggalReport])
 
   const columns: ColumnsType<LaporanScreeningTypeTable> = [
     {
-      title: 'Diagnosa',
-      dataIndex: 'diagnosa',
-      key: 'diagnosa',
+      "title": "SCREENING",
+      "dataIndex": "SCREENING"
     },
     {
-      title: 'Total Hadir',
-      dataIndex: 'total_hadir',
-      key: 'total_hadir',
+      "title": "KATARAK",
+      "dataIndex": "KATARAK"
     },
     {
-      title: 'Total Pasien Lolos Kk',
-      dataIndex: 'total_pasien_lolos_kk',
-      key: 'total_pasien_lolos_kk'
+      "title": "PTERYGIUM",
+      "dataIndex": "PTERYGIUM"
     },
     {
-      title: 'Total Pasien Lolos Kk Hari Pertama',
-      dataIndex: 'total_pasien_lolos_kk_hari_pertama',
-      key: 'total_pasien_lolos_kk_hari_pertama'
+      "title": "HERNIA",
+      "dataIndex": "HERNIA"
     },
     {
-      title: 'Total Pasien Lolos Kk Hari Kedua',
-      dataIndex: 'total_pasien_lolos_kk_hari_kedua',
-      key: 'total_pasien_lolos_kk_hari_kedua'
+      "title": "SUMBING",
+      "dataIndex": "SUMBING"
     },
     {
-      title: 'Total Tidak Lolos',
-      dataIndex: 'total_tidak_lolos',
-      key: 'total_tidak_lolos'
+      "title": "BENJOLAN",
+      "dataIndex": "BENJOLAN"
     },
     {
-      title: 'Tidak Lulus Tensi',
-      dataIndex: 'tidak_lulus_tensi',
-      key: 'tidak_lulus_tensi'
+      "title": "MINOR GA",
+      "dataIndex": "MINOR GA"
     },
     {
-      title: 'Tidak Lulus Fisik',
-      dataIndex: 'tidak_lulus_fisik',
-      key: 'tidak_lulus_fisik'
-    },
-    {
-      title: 'Tidak Lulus Mata',
-      dataIndex: 'tidak_lulus_mata',
-      key: 'tidak_lulus_mata'
-    },
-    {
-      title: 'Tidak Lulus Kk',
-      dataIndex: 'tidak_lulus_kk',
-      key: 'tidak_lulus_kk'
-    },
-    {
-      title: 'Total Pending Kk',
-      dataIndex: 'total_pending_kk',
-      key: 'total_pending_kk'
-    },
-    {
-      title: 'Lolos Pending Hari Pertama',
-      dataIndex: 'lolos_pending_hari_pertama',
-      key: 'lolos_pending_hari_pertama'
-    },
-    {
-      title: 'Lolos Pending Hari Kedua',
-      dataIndex: 'lolos_pending_hari_kedua',
-      key: 'lolos_pending_hari_kedua'
+      "title": "MINOR LOKAL",
+      "dataIndex": "MINOR LOKAL"
     },
   ];
 
-  const data: LaporanScreeningTypeTable[] = Object.keys(laporanScreening).map(key => {
-    return {
-      diagnosa: key,
-      ...laporanScreening[key]
-    }
-  });
+  const data: LaporanScreeningTypeTable[] = laporanScreening;
 
   return (
-    <PageContainer ghost extra={[
-      <Button key="download_report" onClick={downloadReport}>Download Report</Button>,
-    ]}>
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey="id"
-      />
+    <PageContainer ghost >
+      <Select onChange={(value) => setTanggalReport(value)} style={{ width: 300 }}>
+        <Select.Option value={"2022-09-24"}>24-09-2022</Select.Option>
+        <Select.Option value={"2022-09-25"}>25-09-2022</Select.Option>
+      </Select>
+      {
+        laporanScreening &&
+        <Table
+          size='small'
+          columns={columns}
+          dataSource={data}
+          rowKey="id"
+        />
+      }
 
     </PageContainer>
   );

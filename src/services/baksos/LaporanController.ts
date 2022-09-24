@@ -20,8 +20,8 @@ export async function downloadLaporanPendaftaran() {
     })
 }
 
-export async function queryLaporanScreening() {
-    return GetRequest('/laporan/laporan_screening');
+export async function queryLaporanScreening(tgl: string) {
+    return GetRequest(`/laporan/laporan_screening?tgl=${tgl}`);
 }
 
 export async function downloadLaporanScreening() {
@@ -37,8 +37,8 @@ export async function downloadLaporanScreening() {
     })
 }
 
-export async function queryLaporanKehadiran() {
-    return GetRequest('/laporan/laporan_kehadiran');
+export async function queryLaporanKehadiran(tgl: string) {
+    return GetRequest(`/laporan/laporan_kehadiran/?tgl=${tgl}`);
 }
 
 export async function downloadLaporanKehadiran() {

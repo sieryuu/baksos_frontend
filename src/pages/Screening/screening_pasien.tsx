@@ -92,6 +92,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   const [isPendingKKModalOpen, setIsPendingKKModalOpen] = useState(false)
 
   const [kehadiranLabForm] = useForm()
+  const [lolosKartuKuningForm] = useForm()
 
   const retrievePasienKartuKuning = () => {
     if (pasien.id) {
@@ -392,7 +393,14 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
       jam: "",
       perhatian: []
     },
-    onSubmit: values => {
+    onSubmit: async values => {
+      Object.keys(values).forEach(key => {
+        lolosKartuKuningForm.setFieldValue(key, values[key as keyof SerahKartuKuningType])
+      })
+
+      if (values.status == "LOLOS")
+        await lolosKartuKuningForm.validateFields()
+
       if (pasien.id) {
         SerahKartuKuning(
           pasien.id,
@@ -940,11 +948,11 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         <Form
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 20 }}
+          form={lolosKartuKuningForm}
         >
-          {/* <Form.Item name="nomor_kartu_kuning" label="Nomor Kartu Kuning">
-            <Input name='nomor_kartu_kuning' disabled style={{ width: 100 }} />
-          </Form.Item> */}
-          <Form.Item name="tanggal" label="Tanggal Operasi">
+          <Form.Item name="tanggal" label="Tanggal Operasi"
+            rules={[{ required: true, message: 'wajib isi' }]}
+          >
             <DatePicker
               locale={locale}
               name='tanggal'
@@ -952,15 +960,17 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
               disabledDate={current => {
                 return current < moment("2022-09-30", "YYYY-MM-DD") || current > moment("2022-10-03", "YYYY-MM-DD")
               }}
-              onChange={(values) => kartuKuningFormik.setFieldValue('tanggal', values?.format("YYYY-MM-DD"))} />
+              onChange={(values) => kartuKuningFormik.setFieldValue('tanggal', values /*?.format("YYYY-MM-DD") */)} />
           </Form.Item>
-          <Form.Item name="jam" label="Jam Operasi">
+          <Form.Item name="jam" label="Jam Operasi"
+            rules={[{ required: true, message: 'wajib isi' }]}
+          >
             <TimePicker
               locale={locale}
               name="jam"
               format={"HH:mm"}
               value={moment(kartuKuningFormik.values.jam, "HH:mm")}
-              onChange={(values) => kartuKuningFormik.setFieldValue('jam', values?.format("HH:mm"))} />
+              onChange={(values) => kartuKuningFormik.setFieldValue('jam', values /*?.format("HH:mm") */)} />
           </Form.Item>
           <Form.Item name="perhatian" label="Perhatian">
             <VerticalCheckboxGroup
