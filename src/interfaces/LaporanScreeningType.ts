@@ -7,4 +7,5 @@ interface LaporanScreeningTypeTable {
     "BENJOLAN": number;
     "MINOR GA": number;
     "MINOR LOKAL": number;
+    TOTAL: number;
 }

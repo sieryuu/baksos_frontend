@@ -73,6 +73,10 @@ const LaporanScreeningPage: React.FC = () => {
       "title": "MINOR LOKAL",
       "dataIndex": "MINOR LOKAL"
     },
+    {
+      "title": "TOTAL",
+      "dataIndex": "TOTAL"
+    },
   ];
 
   const data: LaporanScreeningTypeTable[] = laporanScreening;
