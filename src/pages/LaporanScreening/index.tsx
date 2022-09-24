@@ -90,6 +90,7 @@ const LaporanScreeningPage: React.FC = () => {
           columns={columns}
           dataSource={data}
           rowKey="id"
+          pagination={{ pageSize: 100 }}
         />
       }
 
