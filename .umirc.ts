@@ -46,16 +46,19 @@ export default defineConfig({
       name: 'Laporan Pendaftaran',
       path: '/laporan-pendaftaran',
       component: './LaporanPendaftaran',
+      hideInMenu: true
     },
     {
       name: 'Laporan Kehadiran',
       path: '/laporan-kehadiran',
       component: './LaporanKehadiran',
+      hideInMenu: true
     },
     {
       name: 'Laporan Screening',
       path: '/laporan-screening',
       component: './LaporanScreening',
+      hideInMenu: true
     },
     {
       name: 'Login',

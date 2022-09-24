@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
 import type { ColumnsType } from 'antd/es/table';
-import { Button, Card, Input, notification, Space, Table, TablePaginationConfig, Tooltip, Upload } from 'antd';
+import { Button, Card, Checkbox, Input, notification, Space, Table, TablePaginationConfig, Tooltip, Upload } from 'antd';
 import { history } from 'umi';
 import Title from 'antd/lib/typography/Title';
 import { getPasienTemplate, importPasien, queryPasienByNoSeri, queryPasienList, searchPasien } from '@/services/baksos/PasienController';
@@ -29,6 +29,7 @@ const ListPasienPage: React.FC = () => {
       pageSize: 10,
     },
   });
+  const [isDisableClick, setIsDisableClick] = useState(false)
 
   const getPasienList = () => {
     queryPasienList(tableParams.pagination?.current || 1, tableParams.pagination?.pageSize || 10)
@@ -165,31 +166,8 @@ const ListPasienPage: React.FC = () => {
     },
     {
       title: 'No. Kartu Kuning',
-      dataIndex: ['kartukuning', 'nomor'],
-    },
-    // {
-    //   title: 'Copy',
-    //   render: (text, record) => (
-    //     <Tooltip title="copy">
-    //       <Button onClick={(e) => {
-    //         e.stopPropagation()
-    //         copy([
-    //           record.nomor_seri,
-    //           record.nama,
-    //           record.jenis_kelamin,
-    //           record.tanggal_lahir,
-    //           record.penyakit,
-    //           record.nomor_identitas,
-    //           record.nomor_telepon,
-    //           record.alamat,
-    //           record.nomor_antrian,
-    //           record.kartukuning.nomor
-    //         ].join('\t'))
-    //       }}
-    //         shape="circle" icon={<CopyOutlined />} />
-    //     </Tooltip>
-    //   ),
-    // },
+      dataIndex: ['kartukuning', 'nomor']
+    }
   ];
 
   const data: PasienType[] = pasiens;
@@ -219,6 +197,7 @@ const ListPasienPage: React.FC = () => {
             onSearch={searchPasienByParam}
             style={{ width: 800 }}
           />
+          {/* <Checkbox checked={isDisableClick}>Disable Click Table (Untuk copy data)</Checkbox> */}
         </Space>
       </Card>
       <Card>

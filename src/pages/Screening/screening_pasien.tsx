@@ -120,7 +120,7 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
   useEffect(() => {
     retrievePasienKartuKuning()
     retrieveDetailPasien()
-  }, [])
+  }, [pasien])
 
   //#region Tensi
   const capHadirTensi = (hadir: boolean) => {
