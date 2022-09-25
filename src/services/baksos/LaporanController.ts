@@ -24,9 +24,9 @@ export async function queryLaporanScreening(tgl: string) {
     return GetRequest(`/laporan/laporan_screening?tgl=${tgl}`);
 }
 
-export async function downloadLaporanScreening() {
+export async function downloadLaporanScreening(tgl: string) {
     const token = GetCurrentUserToken()
-    return request<AxiosResponse>(BAKSOS_BACKEND_URL + '/laporan/download_laporan_screening/', {
+    return request<AxiosResponse>(BAKSOS_BACKEND_URL + `/laporan/download_laporan_screening/?tgl=${tgl}`, {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",

@@ -22,17 +22,20 @@ const LaporanScreeningPage: React.FC = () => {
   }
 
   const downloadReport = () => {
-    downloadLaporanScreening()
-      .then(data => {
-        downloadFile(data)
-      })
-      .catch(err => {
-        notification["warning"]({
-          message: `Download Gagal`,
-          description: ParseResponseError(err),
-          placement: "bottomRight"
-        });
-      })
+    if (tanggalReport)
+      downloadLaporanScreening(tanggalReport)
+        .then(data => {
+          downloadFile(data)
+        })
+        .catch(err => {
+          notification["warning"]({
+            message: `Download Gagal`,
+            description: ParseResponseError(err),
+            placement: "bottomRight"
+          });
+        })
+    else
+      notification["warning"]({ message: 'Penarikan Laporan Screening Gagal', description: "Pilih tanggal terlebih dahulu", placement: "bottomRight" });
   }
 
   useEffect(() => {
@@ -82,7 +85,9 @@ const LaporanScreeningPage: React.FC = () => {
   const data: LaporanScreeningTypeTable[] = laporanScreening;
 
   return (
-    <PageContainer ghost >
+    <PageContainer ghost extra={[
+      <Button key="download_report" onClick={downloadReport}>Download Report</Button>,
+    ]}>
       <Select onChange={(value) => setTanggalReport(value)} style={{ width: 300 }}>
         <Select.Option value={"2022-09-24"}>24-09-2022</Select.Option>
         <Select.Option value={"2022-09-25"}>25-09-2022</Select.Option>
