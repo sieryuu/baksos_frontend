@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
 import type { ColumnsType } from 'antd/es/table';
-import { Button, Card, Checkbox, Input, notification, Space, Table, TablePaginationConfig, Tooltip, Upload } from 'antd';
+import { Button, Card, Checkbox, Input, notification, Space, Table, TablePaginationConfig, Tooltip, Upload, Typography } from 'antd';
 import { history } from 'umi';
 import Title from 'antd/lib/typography/Title';
 import { getPasienTemplate, importPasien, queryPasienByNoSeri, queryPasienList, searchPasien } from '@/services/baksos/PasienController';
@@ -12,6 +12,7 @@ import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import copy from 'copy-to-clipboard';
 
 const { Search } = Input
+const { Link } = Typography
 
 interface TableParams {
   pagination?: TablePaginationConfig;
@@ -124,6 +125,9 @@ const ListPasienPage: React.FC = () => {
       title: 'Nama',
       dataIndex: 'nama',
       key: 'nama',
+      render: (value: string, record: PasienType, index: number) => {
+        return <Link onClick={() => history.push(`/pasien/${record.id}`)}>{value}</Link>
+      }
     },
     {
       title: 'JK',
@@ -211,11 +215,11 @@ const ListPasienPage: React.FC = () => {
               pagination,
             });
           }}
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: event => history.push(`/pasien/${record.id}`)
-            }
-          }}
+        // onRow={(record, rowIndex) => {
+        //   return {
+        //     onClick: event => history.push(`/pasien/${record.id}`),
+        //   }
+        // }}
         />
       </Card>
     </PageContainer>
