@@ -463,7 +463,8 @@ const ScreeningPasienPage: React.FC<ScreeningPasienPageProps> = (props) => {
         </ProCard>
         {
           pasien.nomor_antrian ?
-            pasien.perlu_rescreen && !moment(pasien.tanggal_nomor_antrian).isSame(moment(), 'day') ?
+            pasien.perlu_rescreen && !moment(pasien.tanggal_nomor_antrian).isSame(moment(), 'day') && pasien.tanggal_nomor_antrian_pertama == null
+              ?
               <Card>Pasien Belum Absen</Card>
               :
               <>

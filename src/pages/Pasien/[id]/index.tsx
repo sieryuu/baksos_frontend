@@ -95,7 +95,7 @@ const PasienDetailPage: React.FC = () => {
 
   const pasienSudahDaftar = pasien.nomor_antrian != null
   const pasienAbsenHariIni = (moment(pasien.tanggal_nomor_antrian, "YYYY-MM-DD").isSame(moment(), "day"))
-  const pasienPerluRescreenHariIni = pasien.perlu_rescreen && (pasienAbsenHariIni == false)
+  const pasienPerluRescreenHariIni = pasien.perlu_rescreen && (pasienAbsenHariIni == false) && pasien.tanggal_nomor_antrian_pertama == null
 
   return (
     <PageContainer ghost extra={[
